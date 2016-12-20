@@ -1,5 +1,5 @@
-//#ifndef _MAIN
-//#define _MAIN
+//#ifndef _MAIN_H_
+//#define _MAIN_H_
 
 
 #include "../3048f.h"

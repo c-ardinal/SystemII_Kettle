@@ -4,45 +4,73 @@
 /* システムの初期化 */
 void initSystem(void){
 	//各処理の初期化関数呼び出し
-	timerInit();
+	initTimer();
 	initLcd();
 	init7SegLed();
 	initLed();
+	initButton();
+	initSensor();
+	
+	//初期値の設定
+	setWaterTemperature(checkWaterTemperature());
+	setLidState(checkLidState());
+	setWaterLevel(checkWaterLevel());
+	setLockState(0);
+	setRemainingTime(0);
+	setTargetTemperature(HIGH_TEMPERATURE_MODE);
+	
 }
 
 
 /* システム実行 */
 void executeSystem(void){
-	// 演習4課題用の処理
+	drawWaterLevel(getWaterLevel());
+	drawTemperature(getWaterTemperature());
+	drawKeepWarmMode(getTargetTemperature());
+}
+
+
+/* 1msごとに発生するタイマ割り込み */
+#pragma interrupt
+void int_imia1(void){
+	static int count=0;
+	count++;
 	
-	int i;
-	static int count=99;
+	// 1msごとに7segの点灯を切り替え
+	if(count%2==0)
+		drawLeftOf7SegLed(getRemainingTime());
+	else if(count%2==1)
+		drawRightOf7SegLed(getRemainingTime());
 	
-	/* LED点灯 */
-	drawTemperature(count);					//LCDに水温表示
-	drawKeepWarmMode(HIGH_TEMPERATURE_MODE);//LCDに保温モード(高温モード)を表示
-	onLamp(BOIL_LAMP);						//沸騰ランプを点灯
-	onLamp(K_W_LAMP);						//保温ランプを点灯
-	onLamp(LOCK_LAMP);						//ロックランプを点灯
-	drawWaterLevel(4);						//水位メーターを満水状態で表示
-	for(i=0; i<1000; i++)
-		drawKitchenTimer(count);			//キッチンタイマ残り時間表示[1msのウェイト代わり]
-	if(count<=0)
-		count = 99;
-	else
-		count--;
+	// 100ms経った時の処理
+	if(count%100){
+		if(isState(BOIL_BUTTON)==1)
+			setRemainingTime(40);
+		
+		if(isState(TIMER_BUTTON)==1)
+			setRemainingTime(20);
+			
+		if(isState(SUPPLY_BUTTON)==1)
+			setRemainingTime(80);
+		
+		if(isState(LOCK_BUTTON)==1)
+			setRemainingTime(60);
+		
+		if(isState(K_W_BUTTON)==1)
+			setRemainingTime(0);
+			
+		if(checkLidState()==1)
+			offLamp(LOCK_LAMP);
+	}
 	
-	/* LED消灯 */
-	drawTemperature(count);					//LCDに水温表示
-	drawKeepWarmMode(MILK_MODE);			//LCDに保温モード(ミルクモード)を表示
-	offLamp(BOIL_LAMP);						//沸騰ランプを消灯
-	offLamp(K_W_LAMP);						//保温ランプを消灯
-	offLamp(LOCK_LAMP);						//ロックランプを消灯
-	drawWaterLevel(0);						//水位メーターを枯渇状態で表示
-	for(i=0; i<1000; i++)
-		drawKitchenTimer(count);			//キッチンタイマ残り時間表示[1msのウェイト代わり]
-	if(count<=0)
-		count = 99;
-	else
-		count--;
+	// 1000ms経った時の処理
+	if(count%1000){
+		setWaterLevel(checkWaterLevel());
+	}
+	
+	// 1000ms以上経った時の処理
+	if(count>1000)
+		count = 0;
+	
+	ITU1.TSR.BIT.IMFA = 0;			//フラグリセット
 }

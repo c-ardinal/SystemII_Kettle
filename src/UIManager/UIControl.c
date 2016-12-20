@@ -21,16 +21,12 @@ void initLcd(void){
 	timer10us(4);
 	//ファンクション設定：データ幅4bit, 2行表示, 5*8dot
 	write4bitLcd(0x28, CONTROL);
-	waitLcd();
 	//ディスプレイ設定：表示ON, カーソルOFF, 点滅OFF
 	write4bitLcd(0x0c, CONTROL);
-	waitLcd();
 	//表示消去：
 	write4bitLcd(0x01, CONTROL);
-	waitLcd();
 	//エントリーモードセット：読み書き後カーソル右シフト, 表示シフトOFF
 	write4bitLcd(0x06, CONTROL);
-	waitLcd();
 }
 
 
@@ -50,6 +46,7 @@ void write8bitLcd(int writeData, int selectRegister){
 void write4bitLcd(int writeData, int selectRegister){
 	write8bitLcd((writeData >> 4 & 0x0f), selectRegister);
 	write8bitLcd((writeData & 0x0f), selectRegister);
+	waitLcd();
 }
 
 
@@ -79,54 +76,46 @@ void waitLcd(void){
 /* 文字列表示 */
 void drawStringToLcd(char *str, int point){
 	write4bitLcd((0x80+(0x40*point)), CONTROL);
-	waitLcd();
-	while(*str){
+	while(*str)
 		write4bitLcd(*str++, DATA);
-		waitLcd();
-	}
 }
 
 
 /* 水温表示 */
-void drawTemperature(int Temperature){
-	//桁ごとに分割
-	int TemperatureSplit[3] = {0, 0, 0};
-	TemperatureSplit[0] = Temperature/100;
-	TemperatureSplit[1] = (Temperature-(TemperatureSplit[0]*100))/10;
-	TemperatureSplit[2] = Temperature-(TemperatureSplit[0]*100)-(TemperatureSplit[1]*10);
+void drawTemperature(int temperature){
+	//桁ごとに分割{100の位, 10の位, 1の位}
+	int temperatureSplit[3] = {0, 0, 0};
+	temperatureSplit[0] = temperature/100;
+	temperatureSplit[1] = (temperature-(temperatureSplit[0]*100))/10;
+	temperatureSplit[2] = temperature-(temperatureSplit[0]*100)-(temperatureSplit[1]*10);
 	//文字列表示
 	drawStringToLcd("Temperature: ", 0);
 	//100の位表示
-	if(TemperatureSplit[0]==0)
+	if(temperatureSplit[0]==0)
 		write4bitLcd(0x20, DATA);
 	else
-		write4bitLcd(0x30+TemperatureSplit[0], DATA);
-	waitLcd();
+		write4bitLcd(0x30+temperatureSplit[0], DATA);
 	//10の位表示
-	if(TemperatureSplit[1]==0)
+	if(temperatureSplit[1]==0)
 		write4bitLcd(0x20, DATA);
 	else
-		write4bitLcd(0x30+TemperatureSplit[1], DATA);
-	waitLcd();
+		write4bitLcd(0x30+temperatureSplit[1], DATA);
 	//1の位表示
-	write4bitLcd(0x30+TemperatureSplit[2], DATA);
-	waitLcd();
+	write4bitLcd(0x30+temperatureSplit[2], DATA);
 }
 
 
 /* 保温モード表示 */
-void drawKeepWarmMode(int ModeId){
+void drawKeepWarmMode(int modeId){
 	//文字列表示
 	drawStringToLcd(" KeepMode  :  ", 1);
 	//10の位表示
-	if((ModeId/10)==0)
+	if((modeId/10)==0)
 		write4bitLcd(0x20, DATA);
 	else
-		write4bitLcd((0x30+(ModeId/10)), DATA);
-	waitLcd();
+		write4bitLcd((0x30+(modeId/10)), DATA);
 	//1の位表示
-	write4bitLcd((0x30+(ModeId-(ModeId/10)*10)), DATA);
-	waitLcd();
+	write4bitLcd((0x30+(modeId-(modeId/10)*10)), DATA);
 }
 
 
@@ -138,18 +127,28 @@ void init7SegLed(void){
 
 
 /* キッチンタイマー表示 */
-void drawKitchenTimer(int RemainingTime){
-	//10の位表示
-	PA.DR.BYTE &= 0x00;
-	PA.DR.BYTE |= (RemainingTime/10);
-	PA.DR.BYTE |= 0x20;
+void draw7SegLed(int remainingTime){
+	//10の位表示(リセット|書き込み|左点灯右消灯)
+	PA.DR.BYTE = (PA.DR.BYTE & 0x00) | (remainingTime/10) | 0x20;
 	timer10us(50);
-	//1の位表示
-	PA.DR.BYTE &= 0x00;
-	PA.DR.BYTE |= RemainingTime - ((RemainingTime/10)*10);
-	PA.DR.BYTE |= 0x10;
+	//1の位表示(リセット|書き込み|左消灯右点灯)
+	PA.DR.BYTE = (PA.DR.BYTE & 0x00) | (remainingTime - ((remainingTime/10)*10)) | 0x10;
 	timer10us(50);
 }
+
+
+/* キッチンタイマー10の位表示表示 */
+void drawLeftOf7SegLed(int remainingTime){
+	//(リセット|書き込み|左点灯右消灯)
+	PA.DR.BYTE = (PA.DR.BYTE & 0x00) | (remainingTime/10) | 0x20;
+}
+
+/* キッチンタイマー1の位表示表示 */
+void drawRightOf7SegLed(int remainingTime){
+	//(リセット|書き込み|左消灯右点灯)
+	PA.DR.BYTE = (PA.DR.BYTE & 0x00) | (remainingTime - ((remainingTime/10)*10)) | 0x10;
+}
+
 
 
 /* LED初期化 */
@@ -160,30 +159,24 @@ void initLed(void){
 
 
 /* 水位ゲージ表示 */
-void drawWaterLevel(int WaterLevel){
-	if(WaterLevel>=4)
-		PB.DR.BYTE |= 0x0f;
-	else if(WaterLevel==3){
-		PB.DR.BYTE &= 0xf7;
-		PB.DR.BYTE |= 0x07;
-	}
-	else if(WaterLevel==2){
-		PB.DR.BYTE &= 0xf3;
-		PB.DR.BYTE |= 0x03;
-	}
-	else if(WaterLevel==1){
-		PB.DR.BYTE &= 0xf1;
-		PB.DR.BYTE |= 0x01;
-	}
-	else if(WaterLevel<=0)
+void drawWaterLevel(int waterLevel){
+	if(waterLevel==4)
+		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x0f;
+	else if(waterLevel==3)
+		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x07;
+	else if(waterLevel==2)
+		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x03;
+	else if(waterLevel==1)
+		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x01;
+	else if(waterLevel<=0 || waterLevel>=5)
 		PB.DR.BYTE &= 0xf0;
 	
 }
 
 
 /* LED点灯 */
-void onLamp(LampId_t LampId){
-	switch(LampId){
+void onLamp(LampId_t lampId){
+	switch(lampId){
 		case BOIL_LAMP:
 			PB.DR.BIT.B4 = 1;
 		break;
@@ -200,8 +193,8 @@ void onLamp(LampId_t LampId){
 
 
 /* LED消灯 */
-void offLamp(LampId_t LampId){
-	switch(LampId){
+void offLamp(LampId_t lampId){
+	switch(lampId){
 		case BOIL_LAMP:
 			PB.DR.BIT.B4 = 0;
 		break;
@@ -210,6 +203,24 @@ void offLamp(LampId_t LampId){
 		break;
 		case LOCK_LAMP:
 			PB.DR.BIT.B6 = 0;
+		break;
+		default:
+		break;
+	}
+}
+
+
+/* LED反転 */
+void revLamp(LampId_t LampId){
+switch(LampId){
+		case BOIL_LAMP:
+			PB.DR.BIT.B4 = ~PB.DR.BIT.B4;
+		break;
+		case K_W_LAMP:
+			PB.DR.BIT.B5 = ~PB.DR.BIT.B5;
+		break;
+		case LOCK_LAMP:
+			PB.DR.BIT.B6 = ~PB.DR.BIT.B6;
 		break;
 		default:
 		break;
