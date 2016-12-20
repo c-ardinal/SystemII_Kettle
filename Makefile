@@ -30,7 +30,13 @@ clean:
 	@echo ''
 	
 program:
-	@echo 'Program write start.'
-	@h8write -3048 $(TARGET).srec /dev/ttyS0 &> /dev/null
-	@echo 'End.'
+	@h8write -3048 $(TARGET).srec /dev/ttyS0
 	@echo ''
+
+ca:
+	@clear
+	@make clean all
+	
+p:
+	@clear
+	@make program

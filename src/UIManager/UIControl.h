@@ -1,9 +1,9 @@
-//#ifndef _UI_CONTROL
-//#define _UI_CONTROL
+//#ifndef _UI_CONTROL_H_
+//#define _UI_CONTROL_H_
 
 
 #include "../3048f.h"
-#include "../General/GeneralTimer.h"
+#include "../General/Timer.h"
 
 
 //LED識別ID
@@ -35,6 +35,7 @@ typedef enum{
 #define  ON 1
 
 
+
 void initLcd(void);
 void write8bitLcd(int, int);
 void write4bitLcd(int, int);
@@ -45,12 +46,15 @@ void drawTemperature(int);
 void drawKeepWarmMode(int);
 
 void init7SegLed(void);
-void drawKitchenTimer(int);
+void draw7SegLed(int);
+void drawLeftOf7SegLed(int);
+void drawRightOf7SegLed(int);
 
 void initLed(void);
 void drawWaterLevel(int);
 void onLamp(LampId_t);
 void offLamp(LampId_t);
+void revLamp(LampId_t);
 
 
 //#endif
