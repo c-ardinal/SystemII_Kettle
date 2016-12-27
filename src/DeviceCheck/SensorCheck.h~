@@ -3,13 +3,12 @@
 
 
 #include "../3048f.h"
-#include "../constant.h"
 
 
 void initSensor(void);
-void checkWaterTemperature(void);
-void checkLidState(void);
-int gainWaterLevel(void);
+int checkWaterTemperature(void);
+int checkLidState();
+int checkWaterLevel();
 void int_irq4(void);
 
 

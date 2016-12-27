@@ -1,20 +1,7 @@
 #include "KettleInfo.h"
 
-
 /* 情報保存用構造体 */
-static info_t this = {0, 0, 0, 0, 0, 0, 0, 0};
-
-
-/* 加熱状態保存関数 */
-void setHeatState(int heatState){
-	this.heatState = heatState;
-}
-
-
-/* ポンプ状態保存関数 */
-void setPumpState(int pumpState){
-	this.pumpState = pumpState;
-}
+static info_t this = {0, 0, 0, 0, 0, 0};
 
 
 /* 水温保存関数 */
@@ -50,18 +37,6 @@ void setRemainingTime(int remainigTime){
 /* 目標温度保存関数 */
 void setTargetTemperature(int targetTemperature){
 	this.targetTemperature = targetTemperature;
-}
-
-
-/* 加熱状態確認関数 */
-int getHeatState(void){
-	return this.heatState;
-}
-
-
-/* ポンプ状態確認関数 */
-int getPumpState(void){
-	return this.pumpState;
 }
 
 

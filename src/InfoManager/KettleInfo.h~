@@ -6,8 +6,6 @@
 
 /* 	情報管理用構造体 */
 typedef struct{
-	int heatState;
-	int pumpState;
 	int waterTemperature;
 	int lidState;
 	int waterLevel;
@@ -17,9 +15,6 @@ typedef struct{
 }info_t;
 
 
-/* setter */
-void setHeatState(int);
-void setPumpState(int);
 void setWaterTemperature(int);
 void setLidState(int);
 void setWaterLevel(int);
@@ -28,9 +23,6 @@ void setRemainingTime(int);
 void setTargetTemperature(int);
 
 
-/* getter */
-int getHeatState(void);
-int getPumpState(void);
 int getWaterTemperature(void);
 int getLidState(void);
 int getWaterLevel(void);

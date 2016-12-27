@@ -1,5 +1,4 @@
 #include "UIControl.h"
-#include "../General/Timer.h"
 
 
 /* LCD初期化 */
@@ -82,21 +81,6 @@ void drawStringToLcd(char *str, int point){
 }
 
 
-void draw3NumToLcd(int num, int point){
-	int numSplit[3] = {0, 0, 0};
-	numSplit[0] = num/100;
-	numSplit[1] = (num-(numSplit[0]*100))/10;
-	numSplit[2] = num-(numSplit[0]*100)-(numSplit[1]*10);
-	write4bitLcd((0x80+(0x40*point)), CONTROL);
-	//100の位表示
-	write4bitLcd(0x30+numSplit[0], DATA);
-	//10の位表示
-	write4bitLcd(0x30+numSplit[1], DATA);
-	//1の位表示
-	write4bitLcd(0x30+numSplit[2], DATA);
-}
-
-
 /* 水温表示 */
 void drawTemperature(int temperature){
 	//桁ごとに分割{100の位, 10の位, 1の位}
@@ -107,12 +91,12 @@ void drawTemperature(int temperature){
 	//文字列表示
 	drawStringToLcd("Temperature: ", 0);
 	//100の位表示
-	if(temperature<=99)
+	if(temperatureSplit[0]==0)
 		write4bitLcd(0x20, DATA);
 	else
 		write4bitLcd(0x30+temperatureSplit[0], DATA);
 	//10の位表示
-	if(temperature<=9)
+	if(temperatureSplit[1]==0)
 		write4bitLcd(0x20, DATA);
 	else
 		write4bitLcd(0x30+temperatureSplit[1], DATA);
@@ -184,7 +168,7 @@ void drawWaterLevel(int waterLevel){
 		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x03;
 	else if(waterLevel==1)
 		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x01;
-	else if(waterLevel<=0 || waterLevel>=5)
+	else if(waterLevel<=0 || WaterLevel>=5)
 		PB.DR.BYTE &= 0xf0;
 	
 }
