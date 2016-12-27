@@ -1,5 +1,5 @@
 #include "PumpControl.h"
-
+#include "../InfoManager/KettleInfo.h"
 
 /*  */
 void initPump(void){
