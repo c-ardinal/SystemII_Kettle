@@ -3,10 +3,9 @@
 
 
 #include "../3048f.h"
-#include "../constant.h"
 
 
-//ボタン識別ID
+//LED識別ID
 typedef enum{
 	LOCK_BUTTON,
 	BOIL_BUTTON,
@@ -18,7 +17,6 @@ typedef enum{
 
 void initButton(void);
 int isState(ButtonId_t);
-int isPressed(ButtonId_t);
 
 
 //#endif

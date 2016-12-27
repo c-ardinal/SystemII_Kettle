@@ -1,0 +1,28 @@
+#include "Button.h"
+
+
+/* ボタン初期化 */
+void initButton(void){
+	P4.DDR = 0x00;
+}
+
+
+/* 各種ボタン状態取得 */
+int isState(ButtonId_t buttonId){
+	return ((P4.DR.BYTE & (0x01 << buttonId)) >> buttonId);
+}
+
+
+/* 各種ボタン押下検知 */
+int isPressed(ButtonId_t buttonId){
+	static int OldState = 0, NewState = 0;
+	OldState = NewState;
+	NewState = isState(buttonId);
+	
+	if(OldState==1 && NewState==0)
+		return 2;
+	else if(OldState==0 && NewState==1)
+		return 1;
+	else
+		return 0;
+}

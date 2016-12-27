@@ -1,11 +1,11 @@
-//#ifndef _TIMER_H_
-//#define _TIMER_H_
+//#ifndef _GENERAL_TIMER_H_
+//#define _GENERAL_TIMER_H_
 
 
 #include "../3048f.h"
 
 
-/* 割り込み許可マクロ */
+/* 割り込み許可 */
 #define STI() asm volatile ("andc.b #0x7f, ccr")
 
 

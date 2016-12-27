@@ -30,7 +30,7 @@ clean:
 	@echo ''
 	
 program:
-	@h8write -3048 $(TARGET).srec /dev/ttyS0
+	h8write -3048 $(TARGET).srec /dev/ttyS0
 	@echo ''
 
 ca:

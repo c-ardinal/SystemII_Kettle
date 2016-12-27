@@ -3,7 +3,7 @@
 
 
 #include "../3048f.h"
-#include "../constant.h"
+#include "../General/Timer.h"
 
 
 //LED識別ID
@@ -12,6 +12,28 @@ typedef enum{
 	K_W_LAMP,
 	LOCK_LAMP
 }LampId_t;
+	
+
+//保温モード識別ID
+#define HIGH_TEMPERATURE_MODE 98
+#define SAVING_MODE           90
+#define MILK_MODE             60
+
+
+//レジスタ識別ID
+#define CONTROL 0
+#define DATA    1
+
+
+//W/R定数化
+#define WRITE 0
+#define READ  1
+
+
+//ON/OFF定数化
+#define OFF 0
+#define  ON 1
+
 
 
 void initLcd(void);
@@ -20,14 +42,13 @@ void write4bitLcd(int, int);
 int readBusyFlag(void);
 void waitLcd(void);
 void drawStringToLcd(char *, int);
-void draw3NumToLcd(int, int);
 void drawTemperature(int);
 void drawKeepWarmMode(int);
 
 void init7SegLed(void);
-void draw7SegLed(int);
-void drawLeftOf7SegLed(int);
-void drawRightOf7SegLed(int);
+void drawKitchenTimer(int);
+void drawLeftOfKitchenTimer(int);
+void drawRightOfKitchenTimer(int);
 
 void initLed(void);
 void drawWaterLevel(int);
