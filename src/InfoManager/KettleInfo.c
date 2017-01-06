@@ -2,7 +2,7 @@
 
 
 /* 情報保存用構造体 */
-static info_t this = {0, 0, 0, 0, 0, 0, 0, 0};
+static info_t this = {0, 0, 0.0, 0, 0, 0, 0, 0.0};
 
 
 /* 加熱状態保存関数 */
@@ -18,7 +18,7 @@ void setPumpState(int pumpState){
 
 
 /* 水温保存関数 */
-void setWaterTemperature(int waterTemperature){
+void setWaterTemperature(float waterTemperature){
 	this.waterTemperature = waterTemperature;
 }
 
@@ -48,7 +48,7 @@ void setRemainingTime(int remainigTime){
 
 
 /* 目標温度保存関数 */
-void setTargetTemperature(int targetTemperature){
+void setTargetTemperature(float targetTemperature){
 	this.targetTemperature = targetTemperature;
 }
 
@@ -66,7 +66,7 @@ int getPumpState(void){
 
 
 /* 水温確認関数 */
-int getWaterTemperature(void){
+float getWaterTemperature(void){
 	return this.waterTemperature;
 }
 
@@ -96,7 +96,7 @@ int getRemainingTime(void){
 
 
 /* 目標温度確認関数 */
-int getTargetTemperature(void){
+float getTargetTemperature(void){
 	return this.targetTemperature;
 }
 

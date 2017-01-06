@@ -51,7 +51,7 @@ void int_irq4(void){
 void int_adi(void){
 	if(AD.CSR.BIT.ADF==1){
 		AD.CSR.BIT.ADF = 0;
-		setWaterTemperature((int)((AD.DRA>>6)/1024.0*125.0));
+		setWaterTemperature(((AD.DRA>>6)/1024.0*125.0));
 		AD.CSR.BIT.ADST = 0;
 	}
 }

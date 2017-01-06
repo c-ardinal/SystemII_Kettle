@@ -29,15 +29,17 @@ void initSystem(void){
 /* システム実行 */
 void executeSystem(void){
 	drawWaterLevel(getWaterLevel());
-	drawTemperature(getWaterTemperature());
-	drawKeepWarmMode(getTargetTemperature());
+	//drawTemperature(((int)getWaterTemperature()));
+	//drawKeepWarmMode(((int)getTargetTemperature()));
+	draw3NumToLcd(((int)getWaterTemperature()), 0);
+	draw3NumToLcd(culHeaterPid(getTargetTemperature(), getWaterTemperature()), 1);
 }
 
 
 /* 1msごとに発生するタイマ割り込み */
 #pragma interrupt
 void int_imia1(void){
-	static int count=0, heaterPower=0;;
+	static int count=0;
 	count++;
 	
 	// 1msごとに7segの点灯を切り替え
@@ -58,7 +60,6 @@ void int_imia1(void){
 				playBuzzer(20);
 				onLamp(BOIL_LAMP);
 				controlSource(ON);
-				heaterPower = 255;
 				setHeatState(BOIL);
 			}
 		}
@@ -95,14 +96,14 @@ void int_imia1(void){
 		//保温ボタン押下時処理
 		if(isPressed(K_W_BUTTON)==PRESS_START){
 			playBuzzer(20);
-			switch(getTargetTemperature()){
-				case HIGH_TEMPERATURE_MODE:
+			switch((int)getTargetTemperature()){
+				case (int)HIGH_TEMPERATURE_MODE:
 					setTargetTemperature(SAVING_MODE);
 				break;
-				case SAVING_MODE:
+				case (int)SAVING_MODE:
 					setTargetTemperature(MILK_MODE);
 				break;
-				case MILK_MODE:
+				case (int)MILK_MODE:
 					setTargetTemperature(HIGH_TEMPERATURE_MODE);
 				break;
 			}
@@ -135,7 +136,8 @@ void int_imia1(void){
 	
 	// 1000ms経った時の処理
 	if(count%1000==0){
-		setHeaterPower(heaterPower);
+		if(getHeatState()==BOIL)
+			doBoiling();
 		checkWaterTemperature();
 		setWaterLevel(gainWaterLevel());
 	}
