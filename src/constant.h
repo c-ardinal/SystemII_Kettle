@@ -3,16 +3,17 @@
 
 
 //
-#define  KP  1.500F
-#define  KI  0.000F
-#define  KD  0.000F
-#define TIME 0.001F
+#define  KC   55.000F
+//#define  KI   0.000F
+//#define  KD   0.000F
+//#define TIME  1.000
+#define  PU  50.000F
 
 
 //保温モード識別ID
-#define HIGH_TEMPERATURE_MODE 98.000F
-#define SAVING_MODE           90.000F
-#define MILK_MODE             60.000F
+#define HIGH_TEMPERATURE_MODE 98.00F
+#define SAVING_MODE           90.00F
+#define MILK_MODE             60.00F
 
 
 //LCD::制御レジスタ識別ID

@@ -29,10 +29,10 @@ void initSystem(void){
 /* システム実行 */
 void executeSystem(void){
 	drawWaterLevel(getWaterLevel());
-	//drawTemperature(((int)getWaterTemperature()));
-	//drawKeepWarmMode(((int)getTargetTemperature()));
-	draw3NumToLcd(((int)getWaterTemperature()), 0);
-	draw3NumToLcd(culHeaterPid(getTargetTemperature(), getWaterTemperature()), 1);
+	//drawTemperature(getWaterTemperature());
+	//drawKeepWarmMode(getTargetTemperature());
+	drawNumToLcd((int)(getWaterTemperature()*100.0), 0);
+	drawNumToLcd(doKeepWarm(), 1);
 }
 
 
@@ -58,7 +58,6 @@ void int_imia1(void){
 		if(isPressed(BOIL_BUTTON)==PRESS_START){
 			if(getLidState()==CLOSE && getHeatState()!=BOIL){
 				playBuzzer(20);
-				onLamp(BOIL_LAMP);
 				controlSource(ON);
 				setHeatState(BOIL);
 			}
@@ -120,11 +119,7 @@ void int_imia1(void){
 			offLamp(LOCK_LAMP);
 		
 		//加熱状態によって変化する処理
-		if(getHeatState() == NONE){
-			offLamp(BOIL_LAMP);
-			offLamp(K_W_LAMP);
-		}
-		else if(getHeatState() == BOIL){
+		if(getHeatState() == BOIL){
 			onLamp(BOIL_LAMP);
 			offLamp(K_W_LAMP);
 		}
@@ -132,13 +127,18 @@ void int_imia1(void){
 			offLamp(BOIL_LAMP);
 			onLamp(K_W_LAMP);
 		}
+		else{
+			offLamp(BOIL_LAMP);
+			offLamp(K_W_LAMP);
+		}
 	}
 	
 	// 1000ms経った時の処理
 	if(count%1000==0){
+		checkWaterTemperature();
+		
 		if(getHeatState()==BOIL)
 			doBoiling();
-		checkWaterTemperature();
 		setWaterLevel(gainWaterLevel());
 	}
 	

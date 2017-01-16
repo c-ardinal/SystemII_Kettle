@@ -96,6 +96,22 @@ void draw3NumToLcd(int num, int point){
 	write4bitLcd(0x30+numSplit[2], DATA);
 }
 
+void drawNumToLcd(int num, int point){
+	#define arrSize 6
+	int numSplit[arrSize] = {0, 0, 0, 0, 0, 0};
+	int i = 0;
+	numSplit[0] = num/100000;
+	numSplit[1] = (num-(numSplit[0]*100000))/10000;
+	numSplit[2] = (num-(numSplit[0]*100000)-(numSplit[1]*10000))/1000;
+	numSplit[3] = (num-(numSplit[0]*100000)-(numSplit[1]*10000)-(numSplit[2]*1000))/100;
+	numSplit[4] = (num-(numSplit[0]*100000)-(numSplit[1]*10000)-(numSplit[2]*1000)-(numSplit[3]*100))/10;
+	numSplit[5] = (num-(numSplit[0]*100000)-(numSplit[1]*10000)-(numSplit[2]*1000)-(numSplit[3]*100)-(numSplit[4]*10));
+	
+	write4bitLcd((0x80+(0x40*point)), CONTROL);
+	for(i=0; i<arrSize; i++)
+		write4bitLcd(0x30+numSplit[i], DATA);
+}
+
 
 /* 水温表示 */
 void drawTemperature(int temperature){
