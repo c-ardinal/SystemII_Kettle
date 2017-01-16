@@ -33,10 +33,3 @@ program:
 	h8write -3048 $(TARGET).srec /dev/ttyS0
 	@echo ''
 
-ca:
-	@clear
-	@make clean all
-	
-p:
-	@clear
-	@make program
