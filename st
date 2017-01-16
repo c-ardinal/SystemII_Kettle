@@ -1,18 +1,21 @@
 #!/bin/sh
 
+
 PROGNAME=$(basename $0)
-FILE=".logfile"
+FILE="serial.log"
+
 
 usage() {
   echo ""
-  echo "SystemII tools v1.0 Options:"
+  echo "System-II tools v1.0 Options:"
   echo "  -ca  : Execute 'make clean all'."
   echo "  -p   : Execute 'make program'."
-  echo "  -cap : Execute 'make clean all program'"
-  echo "  -l   : H8 serial log store to '$FILE'"
-  echo "  -t   : To display '$FILE' "
-  echo "  -s   : "
+  echo "  -cap : Execute 'make clean all program'."
+  echo "  -s   : H8 serial log store to '$FILE'."
+  echo "  -d   : Display '$FILE' at realtime."
+  echo "  -f   : Fairing '$FILE' and output to \$2."
 }
+
 
 for OPT in "$@"
 do
@@ -21,44 +24,39 @@ do
     '-h' )
       usage
       ;;
+    # Program compile
     '-ca' )
       make clean all
       ;;
-
+	# To transfer .srec file to H8
     '-p' )
       make program
       ;;
-
+	# Program compile and transfer to H8
     '-cap' )
       make clean all program
       ;;
-
-    '-l' )
-      cat /dev/ttyS0 > $FILE
-      ;;
-
-    '-t' )
-      tailf $FILE
-      ;;
-
+	# Store serial comm 
     '-s' )
-      if [[ -z "$2" ]] || [[ "$2" =~ ^-+ ]]; then
-        grep -Ew "[^\s\S]+" $file | sed -e "s/[^0-9.]*//" > logfile
-        rm -f $file
-      else
-        grep -Ew "[^\s\S]+" $file | sed -e "s/[^0-9.]*//" > $2
-        rm -f $file
-      fi
+      cat /dev/ttyUSB0 > ${FILE}
       ;;
-
+	# Show logfile at real time
+    '-d' ) 
+      tailf ${FILE}
+      ;;
+	# Fairing logfile
+    '-f' )
+      grep -Ew "[^\s\S]+" ${FILE} | sed -e "s/[^0-9.]*//" > ${FILE}2 ; mv ${FILE}2 ${FILE}
+      ;;
+	# Error message
     '--'|'-' )
       echo "$PROGNAME: Invalid argument. Please refer to '$PROGNAME -h'" 1>&2
       ;;
-
+	# Error message
     -*)
       echo "$PROGNAME: Invalid argument. Please refer to '$PROGNAME -h'" 1>&2
       ;;
-
+	# Error message
     *)
       if [[ ! -z "$1" ]] && [[ ! "$1" =~ ^-+ ]]; then
         echo "$PROGNAME: Invalid argument. Please refer to '$PROGNAME -h'" 1>&2
@@ -66,4 +64,6 @@ do
       ;;
   esac
 done
+
+
 echo ""
