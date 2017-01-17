@@ -2,12 +2,9 @@
 //#define _CONSTANT_H_
 
 
-//
+//PID制御l用パラメータ
 #define  KC   55.000F
-//#define  KI   0.000F
-//#define  KD   0.000F
-//#define TIME  1.000
-#define  PU  50.000F
+#define  PU   54.000F
 
 
 //保温モード識別ID

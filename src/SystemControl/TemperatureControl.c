@@ -26,7 +26,7 @@ void switchKeepWarmMode(void){
 int culHeaterPid(float target, float now){
 	static float nowD=0.0, pastD=0.0, integral=0.0;
 	
-	float kP = 0.5 * KC;
+	float kP = 0.6 * KC;
 	float kI = kP / (0.5 * PU);
 	float kD = kP * (0.125 * PU);
 	
