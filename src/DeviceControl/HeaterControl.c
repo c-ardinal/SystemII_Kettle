@@ -8,9 +8,9 @@ void initHeater(void){
 	DA.CR.BIT.DAOE0 = 1;
 	controlSource(ON);
 }
+           
 
-
-/* ヒーター操作 */
+/* ヒーター操作 */ 
 void setHeaterPower(int power){
 	DA.DR0 = (power*2000)/256;
 }

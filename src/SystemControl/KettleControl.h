@@ -6,6 +6,7 @@
 #include "../constant.h"
 #include "../InfoManager/KettleInfo.h"
 #include "../General/Timer.h"
+#include "TemperatureControl.h"
 #include "../DeviceControl/HeaterControl.h"
 #include "../DeviceControl/PumpControl.h"
 #include "../UIManager/UIControl.h"

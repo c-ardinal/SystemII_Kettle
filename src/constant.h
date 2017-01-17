@@ -2,10 +2,15 @@
 //#define _CONSTANT_H_
 
 
+//PID制御l用パラメータ
+#define  KC   55.000F
+#define  PU   54.000F
+
+
 //保温モード識別ID
-#define HIGH_TEMPERATURE_MODE 98
-#define SAVING_MODE           90
-#define MILK_MODE             60
+#define HIGH_TEMPERATURE_MODE 98.00F
+#define SAVING_MODE           90.00F
+#define MILK_MODE             60.00F
 
 
 //LCD::制御レジスタ識別ID

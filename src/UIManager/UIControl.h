@@ -21,6 +21,7 @@ int readBusyFlag(void);
 void waitLcd(void);
 void drawStringToLcd(char *, int);
 void draw3NumToLcd(int, int);
+void drawNumToLcd(int, int);
 void drawTemperature(int);
 void drawKeepWarmMode(int);
 
