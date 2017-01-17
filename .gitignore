@@ -1,2 +1,4 @@
-﻿main.srec
+﻿*.srec
+*.log
+*.*~
 .DS_Store
