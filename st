@@ -2,12 +2,12 @@
 
 
 PROGNAME=$(basename $0)
-FILE="serial.log"
+FILE="log.txt"
 
 
 usage() {
   echo ""
-  echo "System-II tools v1.0 Options:"
+  echo "System-II tools v1.1 Options:"
   echo "  -ca  : Execute 'make clean all'."
   echo "  -p   : Execute 'make program'."
   echo "  -cap : Execute 'make clean all program'."
@@ -46,7 +46,8 @@ do
       ;;
 	# Fairing logfile
     '-f' )
-      grep -Ew "[^\s\S]+" ${FILE} | sed -e "s/[^0-9.]*//" > ${FILE}2 ; mv ${FILE}2 ${FILE}
+      # ヌル文字を改行に置換、１ー33行目はゴミデータなので削除、数値が書かれた行を抽出し、空白などを削除する
+      sed -e 's/\x0/\n/g' ${FILE} | sed -e '1,33d' | grep -Ew "[^\s\S]+" | sed -e "s/[^0-9.]*//" > ${FILE}2 ; mv ${FILE}2 ${FILE}
       ;;
 	# Error message
     '--'|'-' )
