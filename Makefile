@@ -33,9 +33,3 @@ program:
 	h8write -3048 $(TARGET).srec /dev/ttyS0
 	@echo ''
 
-
-log:
-	@file=`find . -name *.txt` ; grep -Ew "[^\s\S]+" ${file} | sed -e "s/[^0-9.]*//" > ${file}2 ; rm -f ${file}
-	
-cat:
-	@tail *.txt | grep -Ew "[^\s\S]+" | sed -e "s/[^0-9.]*//"
