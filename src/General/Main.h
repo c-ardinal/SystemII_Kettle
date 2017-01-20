@@ -1,5 +1,5 @@
-//#ifndef _MAIN_H_
-//#define _MAIN_H_
+#ifndef _MAIN_H_
+#define _MAIN_H_
 
 
 #include "../3048f.h"
@@ -9,4 +9,4 @@
 int main(void);
 
 
-//#endif
+#endif

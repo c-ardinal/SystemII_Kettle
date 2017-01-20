@@ -1,5 +1,5 @@
-//#ifndef _UI_CONTROL_H_
-//#define _UI_CONTROL_H_
+#ifndef _UI_CONTROL_H_
+#define _UI_CONTROL_H_
 
 
 #include "../3048f.h"
@@ -37,4 +37,4 @@ void offLamp(LampId_t);
 void revLamp(LampId_t);
 
 
-//#endif
+#endif

@@ -1,5 +1,5 @@
-//#ifndef _PUMP_CONTROL_H_
-//#define _PUMP_CONTROL_H_
+#ifndef _PUMP_CONTROL_H_
+#define _PUMP_CONTROL_H_
 
 
 #include "../3048f.h"
@@ -11,4 +11,4 @@ void doPump(void);
 void stopPump(void);
 
 
-//#endif
+#endif

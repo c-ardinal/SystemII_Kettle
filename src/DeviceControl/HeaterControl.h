@@ -1,5 +1,5 @@
-//#ifndef _HEATER_CONTROL_H_
-//#define _HEATER_CONTROL_H_
+#ifndef _HEATER_CONTROL_H_
+#define _HEATER_CONTROL_H_
 
 
 #include "../3048f.h"
@@ -11,4 +11,4 @@ void setHeaterPower(int);
 void controlSource(int);
 
 
-//#endif
+#endif

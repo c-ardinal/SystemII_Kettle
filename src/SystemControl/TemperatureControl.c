@@ -1,28 +1,63 @@
 #include "TemperatureControl.h"
 #include "../DeviceControl/HeaterControl.h"
 #include "../InfoManager/KettleInfo.h"
+#include "../UIManager/Buzzer.h"
 
-static int pid = 0;
 
+/* 沸騰実行関数 */
 int doBoiling(void){
-	pid = culHeaterPid(getTargetTemperature(), getWaterTemperature());
-	setHeaterPower(pid);
+	static int tempMaxFlag=0, count=0, buzzerCount=0;
+	setHeaterPower(255);
+	// 水温が100度に達したらフラグON
+	if(getWaterTemperature()>=100)
+		tempMaxFlag = 1;
+	// 100度に達した後3分計測
+	if(tempMaxFlag==1)
+		count++;
+	// 3分経ったら終了
+	if(count>=5){
+		if(buzzerCount++<3){
+			playBuzzer(100);
+		}
+		else{
+			tempMaxFlag = 0;
+			count = 0;
+			setHeatState(KEEP_WARM);
+		}
+	}
 	return 0;
 }
 
 
-
+/* 保温実行関数 */
 int doKeepWarm(void){
+	int pid = culHeaterPid(getTargetTemperature(), getWaterTemperature());
+	setHeaterPower(pid);
 	return pid;
 }
 
 
-
+/* 保温モード切り替え関数 */
 void switchKeepWarmMode(void){
-
+	switch((int)getTargetTemperature()){
+		case (int)HIGH_TEMPERATURE_MODE:
+			setTargetTemperature(SAVING_MODE);
+		break;
+		case (int)SAVING_MODE:
+			setTargetTemperature(MILK_MODE);
+		break;
+		case (int)MILK_MODE:
+			setTargetTemperature(HIGH_TEMPERATURE_MODE);
+		break;
+	}
+	if(getLidState()==CLOSE){
+		if(0<getWaterLevel() && getWaterLevel()<5)
+			setHeatState(BOIL);
+	}
 }
 
 
+/* 保温用PID制御値算出関数 */
 int culHeaterPid(float target, float now){
 	static float nowD=0.0, pastD=0.0, integral=0.0;
 	
@@ -32,7 +67,7 @@ int culHeaterPid(float target, float now){
 	
 	pastD = nowD;
 	nowD = (target - now);
-	integral += ((nowD + pastD) / 2.0);
+	integral += nowD;//((nowD + pastD) / 2.0);
 	
 	float tP = kP * nowD;
 	float tI = kI * integral;

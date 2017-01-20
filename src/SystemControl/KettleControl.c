@@ -29,24 +29,23 @@ void initSystem(void){
 /* システム実行 */
 void executeSystem(void){
 	drawWaterLevel(getWaterLevel());
-	//drawTemperature(getWaterTemperature());
-	//drawKeepWarmMode(getTargetTemperature());
-	drawNumToLcd((int)(getWaterTemperature()*100.0), 0);
-	drawNumToLcd(doKeepWarm(), 1);
+	drawTemperature((int)getWaterTemperature());
+	drawKeepWarmMode((int)getTargetTemperature());
 }
 
 
 /* 1msごとに発生するタイマ割り込み */
 #pragma interrupt
 void int_imia1(void){
-	static int count=0;
+	static int 	count=0;		
+	
 	count++;
 	
 	// 1msごとに7segの点灯を切り替え
 	if(count%2==0)
-		drawLeftOf7SegLed(getRemainingTime());
+		drawLeftOf7SegLed(convertSecondToMinute());
 	else if(count%2==1)
-		drawRightOf7SegLed(getRemainingTime());
+		drawRightOf7SegLed(convertSecondToMinute());
 	
 	// 100ms経った時の処理
 	if(count%100==0){
@@ -57,16 +56,19 @@ void int_imia1(void){
 		//沸騰ボタン押下時処理 
 		if(isPressed(BOIL_BUTTON)==PRESS_START){
 			if(getLidState()==CLOSE && getHeatState()!=BOIL){
-				playBuzzer(20);
-				controlSource(ON);
-				setHeatState(BOIL);
+				if(0<getWaterLevel() && getWaterLevel()<5){
+					playBuzzer(20);
+					setHeatState(BOIL);
+				}
 			}
 		}
 		
 		//キッチンタイマボタン押下時処理
 		if(isPressed(TIMER_BUTTON)==PRESS_START){
-			playBuzzer(20);
-			setRemainingTime(getRemainingTime()+1);
+			if(getRemainingTime()<KITCHEN_TIMER_MAX_TIME){
+				playBuzzer(20);
+				kitchenTimerCountUp();
+			}
 		}
 		
 		//給湯ボタン押下時処理
@@ -83,35 +85,29 @@ void int_imia1(void){
 		if(isPressed(LOCK_BUTTON)==PRESS_START){
 			if(getPumpState()==SUPPLY_NO){
 				playBuzzer(20);
-				if(getLockState()==UNLOCK){
+				if(getLockState()==UNLOCK)
 					setLockState(LOCK);
-				}
-				else{
+				else
 					setLockState(UNLOCK);
-				}
 			}
 		}
 		
 		//保温ボタン押下時処理
 		if(isPressed(K_W_BUTTON)==PRESS_START){
 			playBuzzer(20);
-			switch((int)getTargetTemperature()){
-				case (int)HIGH_TEMPERATURE_MODE:
-					setTargetTemperature(SAVING_MODE);
-				break;
-				case (int)SAVING_MODE:
-					setTargetTemperature(MILK_MODE);
-				break;
-				case (int)MILK_MODE:
-					setTargetTemperature(HIGH_TEMPERATURE_MODE);
-				break;
-			}
+			switchKeepWarmMode();
 		}
 		
 		//ふたの状態によって変化する処理
-		if(getLidState()==OPEN)
-			controlSource(OFF);
-			
+		static int pastLidState = CLOSE;
+		if(pastLidState==OPEN && getLidState()==CLOSE){
+			if(0<getWaterLevel() && getWaterLevel()<5){
+				setHeatState(BOIL);
+				controlSource(ON);
+			}
+		}
+		pastLidState = getLidState();
+		
 		//ロック状態によって変化する処理
 		if(getLockState() == LOCK)
 			onLamp(LOCK_LAMP);
@@ -131,16 +127,24 @@ void int_imia1(void){
 			offLamp(BOIL_LAMP);
 			offLamp(K_W_LAMP);
 		}
-	}
+	}//..... 100ms経った時の処理ここまで .....
+	
 	
 	// 1000ms経った時の処理
 	if(count%1000==0){
+		//水温更新
 		checkWaterTemperature();
-		
+		//水位更新
+		setWaterLevel(gainWaterLevel());
+		//加熱処理
 		if(getHeatState()==BOIL)
 			doBoiling();
-		setWaterLevel(gainWaterLevel());
-	}
+		else if(getHeatState()==KEEP_WARM)
+			doKeepWarm();
+		//キッチンタイマカウントダウン処理
+		kitchenTimerCountDown();
+	}//..... 1000ms経った時の処理ここまで .....
+		
 	
 	// 1000ms以上経った時の処理
 	if(count>1000)
