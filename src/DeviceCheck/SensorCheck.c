@@ -12,6 +12,13 @@ void initSensor(void){
 	AD.CSR.BYTE = 0x60;
 }
 
+/* 加熱可能か判断する関数 */
+int isHeatable(void){
+	if(getLidState()==CLOSE && WATER_LV_MIN<=getWaterLevel() && getWaterLevel()<=WATER_LV_MAX)
+		return TRUE;
+	return FALSE;
+}
+
 
 /* 水温チェック関数 */
 void checkWaterTemperature(void){

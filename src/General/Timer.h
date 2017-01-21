@@ -1,5 +1,5 @@
-//#ifndef _TIMER_H_
-//#define _TIMER_H_
+#ifndef _TIMER_H_
+#define _TIMER_H_
 
 
 #include "../3048f.h"
@@ -15,4 +15,4 @@ void timer10us(int);
 void timer1ms(int);
 
 
-//#endif
+#endif

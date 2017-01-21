@@ -1,5 +1,5 @@
-//#ifndef _TEMPERATURE_CONTROL_H_
-//#define _TEMPERATURE_CONTROL_H_
+#ifndef _TEMPERATURE_CONTROL_H_
+#define _TEMPERATURE_CONTROL_H_
 
 
 #include "../3048f.h"
@@ -12,4 +12,4 @@ void switchKeepWarmMode(void);
 int culHeaterPid(float, float);
 
 
-//#endif
+#endif

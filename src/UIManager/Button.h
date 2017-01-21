@@ -1,5 +1,5 @@
-//#ifndef _BUTTON_H_
-//#define _BUTTON_H_
+#ifndef _BUTTON_H_
+#define _BUTTON_H_
 
 
 #include "../3048f.h"
@@ -21,4 +21,4 @@ int isState(ButtonId_t);
 int isPressed(ButtonId_t);
 
 
-//#endif
+#endif

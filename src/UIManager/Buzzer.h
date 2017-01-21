@@ -1,5 +1,5 @@
-//#ifndef _BUZZER_H_
-//#define _BUZZER_H_
+#ifndef _BUZZER_H_
+#define _BUZZER_H_
 
 
 #include "../3048f.h"
@@ -8,6 +8,8 @@
 
 void initBuzzer(void);
 void playBuzzer(int);
+void onBuzzer(void);
+void offBuzzer(void);
 
 
-//#endif
+#endif

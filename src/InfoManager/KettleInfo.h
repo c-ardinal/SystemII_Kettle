@@ -1,5 +1,5 @@
-//#ifndef _KETTLE_INFO_H_
-//#define _KETTLE_INFO_H_
+#ifndef _KETTLE_INFO_H_
+#define _KETTLE_INFO_H_
 
 
 #include "../3048f.h"
@@ -39,4 +39,4 @@ int getRemainingTime(void);
 float getTargetTemperature(void);
 
 
-//#endif
+#endif

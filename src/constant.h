@@ -1,16 +1,25 @@
-//#ifndef _CONSTANT_H_
-//#define _CONSTANT_H_
+#ifndef _CONSTANT_H_
+#define _CONSTANT_H_
 
 
 //PID制御l用パラメータ
 #define  KC   55.000F
-#define  PU   54.000F
-
+//#define  PU   54.000F
+#define  PU   50.000F
 
 //保温モード識別ID
 #define HIGH_TEMPERATURE_MODE 98.00F
 #define SAVING_MODE           90.00F
 #define MILK_MODE             60.00F
+
+
+//キッチンタイマ用定数
+#define KITCHEN_TIMER_MAX_TIME 3600 
+
+
+//加熱有効な水量の定義
+#define WATER_LV_MIN           1
+#define WATER_LV_MAX           4
 
 
 //LCD::制御レジスタ識別ID
@@ -26,6 +35,11 @@
 //ON/OFF定数化
 #define OFF                    0
 #define  ON                    1
+
+
+//T or F定数化
+#define FALSE                  0
+#define TRUE                   1
 
 
 //保温モード::LOCK/UNLOCK定数化
@@ -55,5 +69,5 @@
 #define SUPPLY_NOW             1
 
 
-//#endif
+#endif
 
