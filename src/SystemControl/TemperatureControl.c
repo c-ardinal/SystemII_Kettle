@@ -50,10 +50,6 @@ void switchKeepWarmMode(void){
 			setTargetTemperature(HIGH_TEMPERATURE_MODE);
 		break;
 	}
-	if(getLidState()==CLOSE){
-		if(0<getWaterLevel() && getWaterLevel()<5)
-			setHeatState(BOIL);
-	}
 }
 
 

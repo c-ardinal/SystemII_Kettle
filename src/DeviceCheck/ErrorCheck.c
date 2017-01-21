@@ -6,18 +6,18 @@
 /* 高温エラー */
 int hasHighTemperatureError(void){
 	if((int)getWaterTemperature()>=110){
-		return 1;
+		return TRUE;
 	}
-	return 0;
+	return FALSE;
 }
 
 
 /* 加熱不能エラー */
 int hasCannotHeatingError(void){
-	static float pastTemp=0;
-	if(getWaterTemperature()<=(getTargetTemperature()-5.0) && getTargetTemperature()<pastTemp){
-		return 1;
+	static float pastTemp=0.0;
+	if(getWaterTemperature()<=(getTargetTemperature()-5.0) && getWaterTemperature()<pastTemp){
+		return TRUE;
 	}
 	pastTemp = getTargetTemperature();
-	return 0;
+	return FALSE;
 }

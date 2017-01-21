@@ -12,6 +12,7 @@
 #include "../UIManager/Button.h"
 #include "../UIManager/Buzzer.h"
 #include "../DeviceCheck/SensorCheck.h"
+#include "../DeviceCheck/ErrorCheck.h"
 #include "TemperatureControl.h"
 #include "KitchenTimerControl.h"
 

@@ -17,6 +17,11 @@
 #define KITCHEN_TIMER_MAX_TIME 3600 
 
 
+//加熱有効な水量の定義
+#define WATER_LV_MIN           1
+#define WATER_LV_MAX           4
+
+
 //LCD::制御レジスタ識別ID
 #define CONTROL                0
 #define DATA                   1
@@ -30,6 +35,11 @@
 //ON/OFF定数化
 #define OFF                    0
 #define  ON                    1
+
+
+//T or F定数化
+#define FALSE                  0
+#define TRUE                   1
 
 
 //保温モード::LOCK/UNLOCK定数化

@@ -7,6 +7,7 @@
 
 
 void initSensor(void);
+int isHeatable(void);
 void checkWaterTemperature(void);
 void checkLidState(void);
 int gainWaterLevel(void);
