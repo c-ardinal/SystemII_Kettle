@@ -4,13 +4,13 @@
 Button button;
 Buzzer buzzer;
 
+
 /* システムの初期化 */
 void initSystem(void){
     //オブジェクトの生成
     button = newButton();
 	buzzer = newBuzzer();
     
-
 	//各処理の初期化関数呼び出し
 	initTimer();
 	initLcd();
@@ -21,7 +21,6 @@ void initSystem(void){
 	initSensor();
 	initHeater();
 	initPump();
-	
 	
 	//初期値の設定
 	checkWaterTemperature();
