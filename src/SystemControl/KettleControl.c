@@ -1,25 +1,27 @@
 #include "KettleControl.h"
 
 
+Button button;
 Buzzer buzzer;
 
 /* システムの初期化 */
 void initSystem(void){
     //オブジェクトの生成
+    button = newButton();
 	buzzer = newBuzzer();
     
 
-    
 	//各処理の初期化関数呼び出し
 	initTimer();
 	initLcd();
 	init7SegLed();
 	initLed();
-	initButton();
+	button.initButton();
 	buzzer.initBuzzer();
 	initSensor();
 	initHeater();
 	initPump();
+	
 	
 	//初期値の設定
 	checkWaterTemperature();
@@ -63,7 +65,7 @@ void int_imia1(void){
 		checkLidState();
 	
 		//沸騰ボタン押下時処理 
-		if(isPressed(BOIL_BUTTON)==PRESS_START){
+		if(button.isPressed(BOIL_BUTTON)==PRESS_START){
 			if(isHeatable()==TRUE && getHeatState()!=BOIL && 
 				cannotHeatingErrorFlag==FALSE && highTemperatureErrorFlag==FALSE){
 					buzzer.playBuzzer(20);
@@ -72,13 +74,13 @@ void int_imia1(void){
 		}
 		
 		//キッチンタイマボタン押下時処理
-		if(isPressed(TIMER_BUTTON)==PRESS_START){
+		if(button.isPressed(TIMER_BUTTON)==PRESS_START){
 			buzzer.playBuzzer(20);
 			kitchenTimerCountUp();
 		}
 		
 		//給湯ボタン押下時処理
-		if(isPressed(SUPPLY_BUTTON)==PRESS_NOW){
+		if(button.isPressed(SUPPLY_BUTTON)==PRESS_NOW){
 			if(getLockState()==UNLOCK)
 				doPump();
 			else
@@ -88,7 +90,7 @@ void int_imia1(void){
 			stopPump();
 		
 		//ロックボタン押下時処理
-		if(isPressed(LOCK_BUTTON)==PRESS_START){
+		if(button.isPressed(LOCK_BUTTON)==PRESS_START){
 			if(getPumpState()==SUPPLY_NO){
 				buzzer.playBuzzer(20);
 				if(getLockState()==UNLOCK)
@@ -99,7 +101,7 @@ void int_imia1(void){
 		}
 		
 		//保温ボタン押下時処理
-		if(isPressed(K_W_BUTTON)==PRESS_START){
+		if(button.isPressed(K_W_BUTTON)==PRESS_START){
 			buzzer.playBuzzer(20);
 			switchKeepWarmMode();
 			if(isHeatable() && 

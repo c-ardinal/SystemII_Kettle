@@ -16,6 +16,14 @@ typedef enum{
 }ButtonId_t;
 
 
+typedef struct{
+    void (*initButton)(void);
+    int (*isState)(ButtonId_t);
+    int (*isPressed)(ButtonId_t);
+} Button;
+
+
+Button newButton(void);
 void initButton(void);
 int isState(ButtonId_t);
 int isPressed(ButtonId_t);
