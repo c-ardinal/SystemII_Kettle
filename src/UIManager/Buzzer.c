@@ -5,7 +5,7 @@
 
 
 Buzzer buzzer = {initBuzzer, playBuzzer, onBuzzer, offBuzzer};
-
+UIControl uiControl;
 
 Buzzer newBuzzer(void){
     return buzzer;
@@ -14,6 +14,7 @@ Buzzer newBuzzer(void){
 
 void initBuzzer(void){
 	P6.DDR = 0x70;
+	uiControl = newUiControl();
 }
 
 
@@ -28,9 +29,9 @@ void playBuzzer(int playSeconds){
 			remainingTime = getRemainingTime()/60;
 			
 		if(i%2==0)
-			drawLeftOf7SegLed(remainingTime);
+			uiControl.drawLeftOf7SegLed(remainingTime);
 		else if(i%2==1)
-			drawRightOf7SegLed(remainingTime);
+			uiControl.drawRightOf7SegLed(remainingTime);
 		timer1ms(1);
 	}
 	P6.DR.BIT.B5 = 0;

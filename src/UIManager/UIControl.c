@@ -2,6 +2,17 @@
 #include "../General/Timer.h"
 
 
+UIControl uiControl= {
+    initLcd, drawStringToLcd, draw3NumToLcd, drawNumToLcd, drawTemperature, drawKeepWarmMode, 
+    init7SegLed, draw7SegLed, drawLeftOf7SegLed, drawRightOf7SegLed, 
+    initLed, drawWaterLevel, onLamp, offLamp};
+
+
+UIControl newUiControl(void){
+    return uiControl;
+}
+
+
 /* LCD初期化 */
 void initLcd(void){
 	//ポート3の初期化

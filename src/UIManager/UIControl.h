@@ -14,6 +14,33 @@ typedef enum{
 }LampId_t;
 
 
+typedef struct{
+    void (*initLcd)(void);
+    //void (*write8bitLcd)(int, int);
+    //void (*write4bitLcd)(int, int);
+    //int  (*readBusyFlag)(void);
+    //void (*waitLcd)(void);
+    void (*drawStringToLcd)(char *, int);
+    void (*draw3NumToLcd)(int, int);
+    void (*drawNumToLcd)(int, int);
+    void (*drawTemperature)(int);
+    void (*drawKeepWarmMode)(int);
+
+    void (*init7SegLed)(void);
+    void (*draw7SegLed)(int);
+    void (*drawLeftOf7SegLed)(int);
+    void (*drawRightOf7SegLed)(int);
+
+    void (*initLed)(void);
+    void (*drawWaterLevel)(int);
+    void (*onLamp)(LampId_t);
+    void (*offLamp)(LampId_t);
+    //void (*revLamp)(LampId_t);
+} UIControl;
+
+
+UIControl newUiControl(void);
+
 void initLcd(void);
 void write8bitLcd(int, int);
 void write4bitLcd(int, int);
