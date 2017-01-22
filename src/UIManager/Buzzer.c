@@ -3,6 +3,15 @@
 #include "../UIManager/UIControl.h"
 #include "../InfoManager/KettleInfo.h"
 
+
+Buzzer buzzer = {initBuzzer, playBuzzer, onBuzzer, offBuzzer};
+
+
+Buzzer newBuzzer(void){
+    return buzzer;
+}
+
+
 void initBuzzer(void){
 	P6.DDR = 0x70;
 }
