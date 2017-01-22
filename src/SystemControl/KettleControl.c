@@ -1,6 +1,7 @@
 #include "KettleControl.h"
 
 
+UIControl uiControl;
 Button button;
 Buzzer buzzer;
 
@@ -8,14 +9,15 @@ Buzzer buzzer;
 /* システムの初期化 */
 void initSystem(void){
     //オブジェクトの生成
+    uiControl = newUiControl();
     button = newButton();
 	buzzer = newBuzzer();
     
 	//各処理の初期化関数呼び出し
 	initTimer();
-	initLcd();
-	init7SegLed();
-	initLed();
+	uiControl.initLcd();
+	uiControl.init7SegLed();
+	uiControl.initLed();
 	button.initButton();
 	buzzer.initBuzzer();
 	initSensor();
@@ -37,9 +39,9 @@ void initSystem(void){
 
 /* システム実行 */
 void executeSystem(void){
-	drawWaterLevel(getWaterLevel());
-	drawTemperature((int)getWaterTemperature());
-	drawKeepWarmMode((int)getTargetTemperature());
+	uiControl.drawWaterLevel(getWaterLevel());
+	uiControl.drawTemperature((int)getWaterTemperature());
+	uiControl.drawKeepWarmMode((int)getTargetTemperature());
 }
 
 
@@ -53,9 +55,9 @@ void int_imia1(void){
 	
 	// 1msごとに7segの点灯を切り替え
 	if(countMsec%2==0)
-		drawLeftOf7SegLed(convertSecondToMinute());
+		uiControl.drawLeftOf7SegLed(convertSecondToMinute());
 	else if(countMsec%2==1)
-		drawRightOf7SegLed(convertSecondToMinute());
+		uiControl.drawRightOf7SegLed(convertSecondToMinute());
 	
 	// 100ms経った時の処理
 	if(countMsec%100==0){
