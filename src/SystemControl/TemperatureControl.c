@@ -23,6 +23,7 @@ int doBoiling(void){
 			tempMaxFlag = 0;
 			count = 0;
 			setHeatState(KEEP_WARM);
+			return 1;
 		}
 	}
 	return 0;
@@ -30,10 +31,21 @@ int doBoiling(void){
 
 
 /* 保温実行関数 */
-int doKeepWarm(void){
-	int pid = culHeaterPid(getTargetTemperature(), getWaterTemperature());
-	setHeaterPower(pid);
-	return pid;
+void doKeepWarm(int mode){
+	switch(mode){
+		case PREPARATION:
+			setHeaterPower(0);
+		break;
+		case START:
+			setHeaterPower(
+				culHeaterPid(
+					getTargetTemperature(), getWaterTemperature()
+				)
+			);
+		break;
+		default:
+		break;
+	}
 }
 
 
@@ -63,7 +75,7 @@ int culHeaterPid(float target, float now){
 	
 	pastD = nowD;
 	nowD = (target - now);
-	integral += nowD;//((nowD + pastD) / 2.0);
+	integral += ((nowD + pastD) / 2.0);
 	
 	float tP = kP * nowD;
 	float tI = kI * integral;

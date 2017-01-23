@@ -39,7 +39,10 @@ void executeSystem(void){
 #pragma interrupt
 void int_imia1(void){
 	static int countMsec=0, countSec=0;		
-	static int cannotHeatingErrorFlag=0, highTemperatureErrorFlag=0, errorBuzzerCount=0;
+	static int cannotHeatingErrorFlag=0, 
+			   highTemperatureErrorFlag=0,
+			   errorBuzzerCount=0,
+			   keepWarmEnableFlag=0;
 	
 	countMsec++;
 	
@@ -96,14 +99,17 @@ void int_imia1(void){
 			playBuzzer(20);
 			switchKeepWarmMode();
 			if(isHeatable() && 
-				cannotHeatingErrorFlag==FALSE && highTemperatureErrorFlag==FALSE)
+				cannotHeatingErrorFlag==FALSE 
+				&& highTemperatureErrorFlag==FALSE)
 				setHeatState(BOIL);
 		}
 		
 		//ふたの状態によって変化する処理
 		static int pastLidState = CLOSE;
-		if(isHeatable()==TRUE && pastLidState==OPEN && 
-			cannotHeatingErrorFlag==FALSE && highTemperatureErrorFlag==FALSE){
+		if(isHeatable()==TRUE 
+			&& pastLidState==OPEN 
+			&& cannotHeatingErrorFlag==FALSE 
+			&& highTemperatureErrorFlag==FALSE){
 			setHeatState(BOIL);
 			controlSource(ON);
 		}
@@ -138,20 +144,33 @@ void int_imia1(void){
 		//水位更新
 		setWaterLevel(gainWaterLevel());
 		//加熱処理
-		if(getHeatState()==BOIL)
+		if(getHeatState()==BOIL){
+			keepWarmEnableFlag=0;
 			doBoiling();
-		else if(getHeatState()==KEEP_WARM)
-			doKeepWarm();
+		}
+		else if(getHeatState()==KEEP_WARM){
+			if(keepWarmEnableFlag==0){
+				doKeepWarm(PREPARATION);
+				if(getWaterTemperature()<=getTargetTemperature()){
+					playBuzzer(30);
+					keepWarmEnableFlag=1;
+				}
+			}
+			else
+				doKeepWarm(START);
+		}
 		//キッチンタイマカウントダウン処理
 		kitchenTimerCountDown();
 		countMsec = 0;
 		countSec++;
-		if(cannotHeatingErrorFlag==TRUE || highTemperatureErrorFlag==TRUE)
+		if(cannotHeatingErrorFlag==TRUE 
+			|| highTemperatureErrorFlag==TRUE)
 			errorBuzzerCount++;
 	}//..... 1000ms経った時の処理ここまで .....
 		
 	// 水位が低すぎるとき、もしくは満水だったとき
-	if(getWaterLevel()<WATER_LV_MIN || WATER_LV_MAX<getWaterLevel()){
+	if(getWaterLevel()<WATER_LV_MIN 
+		|| WATER_LV_MAX<getWaterLevel()){
 		setHeatState(NONE);
 		controlSource(OFF);
 	}
