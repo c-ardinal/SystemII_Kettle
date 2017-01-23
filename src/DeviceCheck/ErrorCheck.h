@@ -6,6 +6,7 @@
 #include "../constant.h"
 
 
+void initErrorCheck(void);
 int hasHighTemperatureError(void);
 int hasCannotHeatingError(void);
 

@@ -4,6 +4,7 @@
 
 #include "../3048f.h"
 
+
 /* 	情報管理用構造体 */
 typedef struct{
 	int heatState;
@@ -16,6 +17,29 @@ typedef struct{
 	float targetTemperature;
 }info_t;
 
+
+typedef struct{
+	void (*setHeatState)(int);
+	void (*setPumpState)(int);
+	void (*setWaterTemperature)(float);
+	void (*setLidState)(int);
+	void (*setWaterLevel)(int);
+	void (*setLockState)(int);
+	void (*setRemainingTime)(int);
+	void (*setTargetTemperature)(float);
+
+	int (*getHeatState)(void);
+	int (*getPumpState)(void);
+	float (*getWaterTemperature)(void);
+	int (*getLidState)(void);
+	int (*getWaterLevel)(void);
+	int (*getLockState)(void);
+	int (*getRemainingTime)(void);
+	float (*getTargetTemperature)(void);
+}KettleInfo;
+
+
+KettleInfo newKettleInfo(void);
 
 /* setter */
 void setHeatState(int);

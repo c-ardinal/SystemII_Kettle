@@ -3,9 +3,17 @@
 #include "../DeviceControl/HeaterControl.h"
 
 
+KettleInfo kettleInfo;
+
+
+void initErrorCheck(void){
+    kettleInfo = newKettleInfo();
+}
+
+
 /* 高温エラー */
 int hasHighTemperatureError(void){
-	if((int)getWaterTemperature()>=110){
+	if((int)kettleInfo.getWaterTemperature()>=110){
 		return TRUE;
 	}
 	return FALSE;
@@ -15,9 +23,10 @@ int hasHighTemperatureError(void){
 /* 加熱不能エラー */
 int hasCannotHeatingError(void){
 	static float pastTemp=0.0;
-	if(getWaterTemperature()<=(getTargetTemperature()-5.0) && getWaterTemperature()<pastTemp){
+	if(kettleInfo.getWaterTemperature()<=(kettleInfo.getTargetTemperature()-5.0) 
+	    && kettleInfo.getWaterTemperature()<pastTemp){
 		return TRUE;
 	}
-	pastTemp = getTargetTemperature();
+	pastTemp = kettleInfo.getTargetTemperature();
 	return FALSE;
 }

@@ -4,12 +4,20 @@
 #include "../UIManager/Buzzer.h"
 
 
+KettleInfo kettleInfo;
+
+
+void newTemperatureControl(void){
+    kettleInfo = newKettleInfo();
+}
+
+
 /* 沸騰実行関数 */
 int doBoiling(void){
 	static int tempMaxFlag=0, count=0, buzzerCount=0;
 	setHeaterPower(255);
 	// 水温が100度に達したらフラグON
-	if(getWaterTemperature()>=100)
+	if(kettleInfo.getWaterTemperature()>=100)
 		tempMaxFlag = 1;
 	// 100度に達した後3分計測
 	if(tempMaxFlag==1)
@@ -22,7 +30,7 @@ int doBoiling(void){
 		else{
 			tempMaxFlag = 0;
 			count = 0;
-			setHeatState(KEEP_WARM);
+			kettleInfo.setHeatState(KEEP_WARM);
 		}
 	}
 	return 0;
@@ -31,7 +39,7 @@ int doBoiling(void){
 
 /* 保温実行関数 */
 int doKeepWarm(void){
-	int pid = culHeaterPid(getTargetTemperature(), getWaterTemperature());
+	int pid = culHeaterPid(kettleInfo.getTargetTemperature(), kettleInfo.getWaterTemperature());
 	setHeaterPower(pid);
 	return pid;
 }
@@ -39,15 +47,15 @@ int doKeepWarm(void){
 
 /* 保温モード切り替え関数 */
 void switchKeepWarmMode(void){
-	switch((int)getTargetTemperature()){
+	switch((int)kettleInfo.getTargetTemperature()){
 		case (int)HIGH_TEMPERATURE_MODE:
-			setTargetTemperature(SAVING_MODE);
+			kettleInfo.setTargetTemperature(SAVING_MODE);
 		break;
 		case (int)SAVING_MODE:
-			setTargetTemperature(MILK_MODE);
+			kettleInfo.setTargetTemperature(MILK_MODE);
 		break;
 		case (int)MILK_MODE:
-			setTargetTemperature(HIGH_TEMPERATURE_MODE);
+			kettleInfo.setTargetTemperature(HIGH_TEMPERATURE_MODE);
 		break;
 	}
 }
