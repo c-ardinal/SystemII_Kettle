@@ -13,6 +13,11 @@ KettleInfo kettleInfo = {
 static info_t this = {0, 0, 0.0, 0, 0, 0, 0, 0.0};
 
 
+KettleInfo newKettleInfo(void){
+	return kettleInfo;
+}
+
+
 /* 加熱状態保存関数 */
 void setHeatState(int heatState){
 	this.heatState = heatState;

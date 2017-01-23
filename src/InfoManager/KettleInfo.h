@@ -39,6 +39,8 @@ typedef struct{
 }KettleInfo;
 
 
+KettleInfo newKettleInfo(void);
+
 /* setter */
 void setHeatState(int);
 void setPumpState(int);

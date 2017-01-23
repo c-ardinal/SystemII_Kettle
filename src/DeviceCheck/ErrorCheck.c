@@ -2,6 +2,7 @@
 #include "../InfoManager/KettleInfo.h"
 #include "../DeviceControl/HeaterControl.h"
 
+KettleInfo kettleInfo = newKettleInfo();
 
 /* 高温エラー */
 int hasHighTemperatureError(void){
