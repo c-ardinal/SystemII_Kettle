@@ -1,10 +1,17 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: KettleInfo.h
+ * @brief	: KettleInfo.c用のヘッダファイル
+ * ------------------------------------------------------ * 
+ */
 #ifndef _KETTLE_INFO_H_
 #define _KETTLE_INFO_H_
 
 
 #include "../3048f.h"
 
-/* 	情報管理用構造体 */
+
+/* 	システム情報管理用構造体 */
 typedef struct{
 	int heatState;
 	int pumpState;

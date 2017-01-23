@@ -1,3 +1,9 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: Bzzer.c
+ * @brief	: ブザーの制御を行う
+ * ------------------------------------------------------ * 
+ */
 #include "Buzzer.h"
 #include "../General/Timer.h"
 #include "../UIManager/UIControl.h"

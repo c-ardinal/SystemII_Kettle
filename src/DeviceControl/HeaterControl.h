@@ -1,3 +1,9 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: HeaterControl.h
+ * @brief	: HeaterControl.c用のヘッダファイル
+ * ------------------------------------------------------ * 
+ */
 #ifndef _HEATER_CONTROL_H_
 #define _HEATER_CONTROL_H_
 
