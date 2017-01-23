@@ -1,6 +1,7 @@
 #include "KettleControl.h"
 
 
+KettleInfo kettleInfo;
 UIControl uiControl;
 Button button;
 Buzzer buzzer;
@@ -9,12 +10,15 @@ Buzzer buzzer;
 /* システムの初期化 */
 void initSystem(void){
     //オブジェクトの生成
+    kettleInfo = newKettleInfo();
     uiControl = newUiControl();
     button = newButton();
 	buzzer = newBuzzer();
     
 	//各処理の初期化関数呼び出し
+	initErrorCheck();
 	initTimer();
+	initKitchenTimer();
 	uiControl.initLcd();
 	uiControl.init7SegLed();
 	uiControl.initLed();
@@ -27,21 +31,21 @@ void initSystem(void){
 	//初期値の設定
 	checkWaterTemperature();
 	checkLidState();
-	setHeatState(NONE);
-	setWaterLevel(gainWaterLevel());
-	setLockState(LOCK);
-	setRemainingTime(0);
-	setTargetTemperature(HIGH_TEMPERATURE_MODE);
-	setPumpState(SUPPLY_NO);	
+	kettleInfo.setHeatState(NONE);
+	kettleInfo.setWaterLevel(gainWaterLevel());
+	kettleInfo.setLockState(LOCK);
+	kettleInfo.setRemainingTime(0);
+	kettleInfo.setTargetTemperature(HIGH_TEMPERATURE_MODE);
+	kettleInfo.setPumpState(SUPPLY_NO);	
 	buzzer.offBuzzer();
 }
 
 
 /* システム実行 */
 void executeSystem(void){
-	uiControl.drawWaterLevel(getWaterLevel());
-	uiControl.drawTemperature((int)getWaterTemperature());
-	uiControl.drawKeepWarmMode((int)getTargetTemperature());
+	uiControl.drawWaterLevel(kettleInfo.getWaterLevel());
+	uiControl.drawTemperature((int)kettleInfo.getWaterTemperature());
+	uiControl.drawKeepWarmMode((int)kettleInfo.getTargetTemperature());
 }
 
 
@@ -67,11 +71,13 @@ void int_imia1(void){
 	
 		//沸騰ボタン押下時処理 
 		if(button.isPressed(BOIL_BUTTON)==PRESS_START){
-			if(isHeatable()==TRUE && getHeatState()!=BOIL && 
-				cannotHeatingErrorFlag==FALSE && highTemperatureErrorFlag==FALSE){
-					buzzer.playBuzzer(20);
-					setHeatState(BOIL);
-			}
+			if(isHeatable()==TRUE 
+			    && kettleInfo.getHeatState()!=BOIL 
+			    && cannotHeatingErrorFlag==FALSE 
+				&& highTemperatureErrorFlag==FALSE){
+				buzzer.playBuzzer(20);
+				kettleInfo.setHeatState(BOIL);
+		}
 		}
 		
 		//キッチンタイマボタン押下時処理
@@ -82,7 +88,7 @@ void int_imia1(void){
 		
 		//給湯ボタン押下時処理
 		if(button.isPressed(SUPPLY_BUTTON)==PRESS_NOW){
-			if(getLockState()==UNLOCK)
+			if(kettleInfo.getLockState()==UNLOCK)
 				doPump();
 			else
 				stopPump();
@@ -92,12 +98,12 @@ void int_imia1(void){
 		
 		//ロックボタン押下時処理
 		if(button.isPressed(LOCK_BUTTON)==PRESS_START){
-			if(getPumpState()==SUPPLY_NO){
+			if(kettleInfo.getPumpState()==SUPPLY_NO){
 				buzzer.playBuzzer(20);
-				if(getLockState()==UNLOCK)
-					setLockState(LOCK);
+				if(kettleInfo.getLockState()==UNLOCK)
+					kettleInfo.setLockState(LOCK);
 				else
-					setLockState(UNLOCK);
+					kettleInfo.setLockState(UNLOCK);
 			}
 		}
 		
@@ -105,19 +111,22 @@ void int_imia1(void){
 		if(button.isPressed(K_W_BUTTON)==PRESS_START){
 			buzzer.playBuzzer(20);
 			switchKeepWarmMode();
-			if(isHeatable() && 
-				cannotHeatingErrorFlag==FALSE && highTemperatureErrorFlag==FALSE)
-				setHeatState(BOIL);
+			if(isHeatable() 
+			    && cannotHeatingErrorFlag==FALSE 
+				&& highTemperatureErrorFlag==FALSE)
+				kettleInfo.setHeatState(BOIL);
 		}
 		
 		//ふたの状態によって変化する処理
 		static int pastLidState = CLOSE;
-		if(isHeatable()==TRUE && pastLidState==OPEN && 
-			cannotHeatingErrorFlag==FALSE && highTemperatureErrorFlag==FALSE){
-			setHeatState(BOIL);
+		if(isHeatable()==TRUE 
+		    && pastLidState==OPEN 
+		    && cannotHeatingErrorFlag==FALSE 
+		    && highTemperatureErrorFlag==FALSE){
+			kettleInfo.setHeatState(BOIL);
 			controlSource(ON);
 		}
-		pastLidState = getLidState();
+		pastLidState = kettleInfo.getLidState();
 		
 		//ロック状態によって変化する処理
 		if(getLockState() == LOCK)
@@ -146,11 +155,11 @@ void int_imia1(void){
 		//水温更新
 		checkWaterTemperature();
 		//水位更新
-		setWaterLevel(gainWaterLevel());
+		kettleInfo.setWaterLevel(gainWaterLevel());
 		//加熱処理
-		if(getHeatState()==BOIL)
+		if(kettleInfo.getHeatState()==BOIL)
 			doBoiling();
-		else if(getHeatState()==KEEP_WARM)
+		else if(kettleInfo.getHeatState()==KEEP_WARM)
 			doKeepWarm();
 		//キッチンタイマカウントダウン処理
 		kitchenTimerCountDown();
@@ -161,8 +170,9 @@ void int_imia1(void){
 	}//..... 1000ms経った時の処理ここまで .....
 		
 	// 水位が低すぎるとき、もしくは満水だったとき
-	if(getWaterLevel()<WATER_LV_MIN || WATER_LV_MAX<getWaterLevel()){
-		setHeatState(NONE);
+	if(kettleInfo.getWaterLevel()<WATER_LV_MIN
+	    || WATER_LV_MAX<kettleInfo.getWaterLevel()){
+		kettleInfo.setHeatState(NONE);
 		controlSource(OFF);
 	}
 	
@@ -178,8 +188,9 @@ void int_imia1(void){
 	}
 	
 	// エラー発生時の処理
-	if(cannotHeatingErrorFlag==1 || highTemperatureErrorFlag==1){
-		setHeatState(NONE);
+	if(cannotHeatingErrorFlag==1 
+	    || highTemperatureErrorFlag==1){
+		kettleInfo.setHeatState(NONE);
 		controlSource(OFF);
 		buzzer.onBuzzer();
 	}

@@ -3,6 +3,10 @@
 #include "../InfoManager/KettleInfo.h"
 #include "../DeviceControl/HeaterControl.h"
 
+
+KettleInfo kettleInfo;
+
+
 /* センサー初期化関数 */
 void initSensor(void){
 	P8.DDR = 0x00;
@@ -10,11 +14,16 @@ void initSensor(void){
 	
 	//AD変換用(動作モード:単一, 割り込み:許可, チャネルセレクト:AN0)
 	AD.CSR.BYTE = 0x60;
+	
+	kettleInfo = newKettleInfo();
 }
+
 
 /* 加熱可能か判断する関数 */
 int isHeatable(void){
-	if(getLidState()==CLOSE && WATER_LV_MIN<=getWaterLevel() && getWaterLevel()<=WATER_LV_MAX)
+	if(kettleInfo.getLidState()==CLOSE 
+	    && WATER_LV_MIN<=kettleInfo.getWaterLevel() 
+	    && kettleInfo.getWaterLevel()<=WATER_LV_MAX)
 		return TRUE;
 	return FALSE;
 }
@@ -29,7 +38,7 @@ void checkWaterTemperature(void){
 
 /* ふたの状態チェック関数 */
 void checkLidState(void){
-	setLidState(!P9.DR.BIT.B4);
+	kettleInfo.setLidState(!P9.DR.BIT.B4);
 }
 
 
@@ -47,7 +56,7 @@ int gainWaterLevel(void){
 #pragma interrupt
 void int_irq4(void){
 	controlSource(OFF);
-	setHeatState(NONE);
+	kettleInfo.setHeatState(NONE);
 	if(INTC.ISR.BIT.IRQ4F==1)
 		INTC.ISR.BIT.IRQ4F = 0;
 }
@@ -58,7 +67,7 @@ void int_irq4(void){
 void int_adi(void){
 	if(AD.CSR.BIT.ADF==1){
 		AD.CSR.BIT.ADF = 0;
-		setWaterTemperature(((float)(AD.DRA>>6))/1024.0*125.0);
+		kettleInfo.setWaterTemperature(((float)(AD.DRA>>6))/1024.0*125.0);
 		AD.CSR.BIT.ADST = 0;
 	}
 }

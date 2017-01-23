@@ -6,6 +6,7 @@
 #include "../constant.h"
 
 
+void initKitchenTimer(void);
 void kitchenTimerCountUp(void);
 void kitchenTimerCountDown(void);
 int convertSecondToMinute(void);
