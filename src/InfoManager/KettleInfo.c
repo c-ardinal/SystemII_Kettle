@@ -1,6 +1,14 @@
 #include "KettleInfo.h"
 
 
+KettleInfo kettleInfo = {
+	setHeatState, setPumpState, setWaterTemperature, setLidState,
+	setWaterLevel, setLockState, setRemainingTime, setTargetTemperature,
+	getHeatState, getPumpState, getWaterTemperature, getLidState,
+	getWaterLevel, getLockState, getRemainingTime, getTargetTemperature
+}
+
+
 /* 情報保存用構造体 */
 static info_t this = {0, 0, 0.0, 0, 0, 0, 0, 0.0};
 
@@ -99,5 +107,3 @@ int getRemainingTime(void){
 float getTargetTemperature(void){
 	return this.targetTemperature;
 }
-
-
