@@ -6,7 +6,7 @@ KettleInfo kettleInfo = {
 	setWaterLevel, setLockState, setRemainingTime, setTargetTemperature,
 	getHeatState, getPumpState, getWaterTemperature, getLidState,
 	getWaterLevel, getLockState, getRemainingTime, getTargetTemperature
-}
+};
 
 
 /* 情報保存用構造体 */
