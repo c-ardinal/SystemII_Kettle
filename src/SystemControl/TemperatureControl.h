@@ -7,7 +7,7 @@
 
 
 int doBoiling(void);
-int doKeepWarm(void);
+void doKeepWarm(int);
 void switchKeepWarmMode(void);
 int culHeaterPid(float, float);
 

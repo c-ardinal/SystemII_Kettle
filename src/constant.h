@@ -4,8 +4,9 @@
 
 //PID制御l用パラメータ
 #define  KC   55.000F
-//#define  PU   54.000F
-#define  PU   50.000F
+#define  PU   54.000F
+//#define  PU   50.000F
+
 
 //保温モード識別ID
 #define HIGH_TEMPERATURE_MODE 98.00F
@@ -45,6 +46,11 @@
 //保温モード::LOCK/UNLOCK定数化
 #define UNLOCK                 0
 #define LOCK                   1
+
+
+#define PREPARATION            0
+#define START                  1
+
 
 //スイッチ::状態定義
 #define PRESS_NO               0
