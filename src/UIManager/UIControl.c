@@ -1,8 +1,20 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: UIControl.c
+ * @brief	: ユーザインターフェースの制御を行う
+ * ------------------------------------------------------ * 
+ */
 #include "UIControl.h"
 #include "../General/Timer.h"
 
 
-/* LCD初期化 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void initLcd(void){
 	//ポート3の初期化
 	P3.DDR = 0xff;
@@ -31,7 +43,13 @@ void initLcd(void){
 }
 
 
-/* LCD8bit書き込み */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void write8bitLcd(int writeData, int selectRegister){
 	P3.DR.BIT.B4 = selectRegister;	//任意のレジスタ設定
 	P3.DR.BIT.B6 = WRITE;			//Writeモード
@@ -43,7 +61,13 @@ void write8bitLcd(int writeData, int selectRegister){
 }
 
 
-/* LCD4bit書き込み */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void write4bitLcd(int writeData, int selectRegister){
 	write8bitLcd((writeData >> 4 & 0x0f), selectRegister);
 	write8bitLcd((writeData & 0x0f), selectRegister);
@@ -51,7 +75,13 @@ void write4bitLcd(int writeData, int selectRegister){
 }
 
 
-/* busyフラグの読み出し */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 int readBusyFlag(void){
 	int result = 0;
 	P3.DDR = 0x70;					//上位3bit出力、下位4bit入力
@@ -67,14 +97,26 @@ int readBusyFlag(void){
 }
 
 
-/* busyフラグによるウェイト */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void waitLcd(void){
 	while(readBusyFlag() != 0)		//上位読み出し
 		readBusyFlag();				//下位は破棄
 }
 
 
-/* 文字列表示 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void drawStringToLcd(char *str, int point){
 	write4bitLcd((0x80+(0x40*point)), CONTROL);
 	while(*str)
@@ -82,6 +124,13 @@ void drawStringToLcd(char *str, int point){
 }
 
 
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void draw3NumToLcd(int num, int point){
 	int numSplit[3] = {0, 0, 0};
 	numSplit[0] = num/100;
@@ -96,6 +145,14 @@ void draw3NumToLcd(int num, int point){
 	write4bitLcd(0x30+numSplit[2], DATA);
 }
 
+
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void drawNumToLcd(int num, int point){
 	#define arrSize 6
 	int numSplit[arrSize] = {0, 0, 0, 0, 0, 0};
@@ -114,7 +171,13 @@ void drawNumToLcd(int num, int point){
 }
 
 
-/* 水温表示 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void drawTemperature(int temperature){
 	//桁ごとに分割{100の位, 10の位, 1の位}
 	int temperatureSplit[3] = {0, 0, 0};
@@ -138,7 +201,13 @@ void drawTemperature(int temperature){
 }
 
 
-/* 保温モード表示 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void drawKeepWarmMode(int modeId){
 	//文字列表示
 	drawStringToLcd(" KeepMode  :  ", 1);
@@ -152,7 +221,13 @@ void drawKeepWarmMode(int modeId){
 }
 
 
-/* 7セグメントLED初期化 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void init7SegLed(void){
 	PA.DDR = 0xff;
 	PA.DR.BYTE = 0x00;

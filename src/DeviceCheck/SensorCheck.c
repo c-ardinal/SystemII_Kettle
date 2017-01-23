@@ -1,9 +1,19 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: SensorCheck.c
+ * @brief	: 各センサーの状態のチェックを行う
+ * ------------------------------------------------------ * 
+ */
 #include "SensorCheck.h"
-#include "../UIManager/UIControl.h"
-#include "../InfoManager/KettleInfo.h"
-#include "../DeviceControl/HeaterControl.h"
 
-/* センサー初期化関数 */
+
+/* 
+ * ------------------------------------------------------ * 
+ * @function: センサー類の初期化を行う
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 void initSensor(void){
 	P8.DDR = 0x00;
 	P9.DDR = 0x00;
@@ -12,28 +22,55 @@ void initSensor(void){
 	AD.CSR.BYTE = 0x60;
 }
 
-/* 加熱可能か判断する関数 */
+
+/* 
+ * ------------------------------------------------------ * 
+ * @function: システムが加熱可能な状態にあるか判断する
+ * @param	: void
+ * @return	: 加熱可能ならTRUE、加熱不能ならFALSE
+ * ------------------------------------------------------ * 
+ */
 int isHeatable(void){
-	if(getLidState()==CLOSE && WATER_LV_MIN<=getWaterLevel() && getWaterLevel()<=WATER_LV_MAX)
+	if(getLidState()==CLOSE 
+		&& WATER_LV_MIN<=getWaterLevel() 
+		&& getWaterLevel()<=WATER_LV_MAX)
 		return TRUE;
 	return FALSE;
 }
 
 
-/* 水温チェック関数 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 水温のチェックを開始する
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 void checkWaterTemperature(void){
 	//AD変換開始
 	AD.CSR.BIT.ADST = 1;
 }
 
 
-/* ふたの状態チェック関数 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: ふたの状態のチェックを行う(ふた状態の更新)
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 void checkLidState(void){
 	setLidState(!P9.DR.BIT.B4);
 }
 
 
-/* 水位チェック関数 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 水位の取得を行う(水位情報の更新)
+ * @param	: void
+ * @return	: 0:空、1〜4:正常、5:満水
+ * ------------------------------------------------------ * 
+ */
 int gainWaterLevel(void){
 	int i;
 	for(i=4; i>=0; i--)
@@ -43,7 +80,13 @@ int gainWaterLevel(void){
 }
 
 
-/* 外部割り込みを用いたふたの状態チェック関数 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: ふたが開閉された時に発動する割り込み処理
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 #pragma interrupt
 void int_irq4(void){
 	controlSource(OFF);
@@ -53,7 +96,13 @@ void int_irq4(void){
 }
 
 
-/* AD変換を用いたサーミスタの状態チェック関数 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: AD変換を用いて水温を更新する処理
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 #pragma interrupt
 void int_adi(void){
 	if(AD.CSR.BIT.ADF==1){

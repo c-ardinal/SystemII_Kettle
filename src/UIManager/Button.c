@@ -1,7 +1,10 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: Button.c
+ * @brief	: 各ボタンのチェックを行う
+ * ------------------------------------------------------ * 
+ */
 #include "Button.h"
-
-
-static int buttonState[8][2] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
 
 /* ボタン初期化 */
@@ -18,6 +21,8 @@ int isState(ButtonId_t buttonId){
 
 /* 各種ボタン状態判断 */
 int isPressed(ButtonId_t buttonId){
+	// ボタンの状態保持用変数 
+	static int buttonState[8][2] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 	buttonState[buttonId][0] = buttonState[buttonId][1];
 	buttonState[buttonId][1] = isState(buttonId);
 	if(buttonState[buttonId][0]==0 && buttonState[buttonId][1]==1)
