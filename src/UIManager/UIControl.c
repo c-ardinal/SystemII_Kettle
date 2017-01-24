@@ -268,18 +268,13 @@ void initLed(void){
 
 /* 水位ゲージ表示 */
 void drawWaterLevel(int waterLevel){
-	if(waterLevel==4)
-		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x0f;
-	else if(waterLevel==3)
-		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x07;
-	else if(waterLevel==2)
-		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x03;
-	else if(waterLevel==1)
-		PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | 0x01;
-	else if(waterLevel<=0 || waterLevel>=5)
-		PB.DR.BYTE &= 0xf0;
-	
+	if(waterLevel>WATER_LV_MAX)
+		waterLevel = WATER_LV_MAX;
+	else if(waterLevel<WATER_LV_EMPTY)
+		waterLevel = WATER_LV_EMPTY;
+	PB.DR.BYTE = (PB.DR.BYTE & 0xf0) | (0x0f>>(WATER_LV_MAX-waterLevel));
 }
+
 
 
 /* LED点灯 */
