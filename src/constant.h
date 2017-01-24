@@ -20,7 +20,6 @@
 //PID制御l用パラメータ
 #define  KC   55.000F
 #define  PU   54.000F
-//#define  PU   50.000F
 
 
 //保温モード識別ID
@@ -33,9 +32,10 @@
 #define KITCHEN_TIMER_MAX_TIME 3600 
 
 
-//加熱有効な水量の定義
+//水量の定義
 #define WATER_LV_MIN           1
 #define WATER_LV_MAX           4
+#define WATER_LV_EMPTY         0
 
 
 //LCD::制御レジスタ識別ID
@@ -63,6 +63,7 @@
 #define LOCK                   1
 
 
+//保温::状態
 #define PREPARATION            0
 #define START                  1
 

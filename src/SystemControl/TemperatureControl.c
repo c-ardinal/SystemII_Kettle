@@ -22,6 +22,7 @@ int doBoiling(void){
 		else{
 			tempMaxFlag = 0;
 			count = 0;
+			buzzerCount=0;
 			setHeatState(KEEP_WARM);
 			return 1;
 		}
