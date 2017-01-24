@@ -234,7 +234,13 @@ void init7SegLed(void){
 }
 
 
-/* キッチンタイマー表示 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void draw7SegLed(int remainingTime){
 	//10の位表示(リセット|書き込み|左点灯右消灯)
 	PA.DR.BYTE = (PA.DR.BYTE & 0x00) | (remainingTime/10) | 0x20;
@@ -245,13 +251,26 @@ void draw7SegLed(int remainingTime){
 }
 
 
-/* キッチンタイマー10の位表示表示 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+*/
 void drawLeftOf7SegLed(int remainingTime){
 	//(リセット|書き込み|左点灯右消灯)
 	PA.DR.BYTE = (PA.DR.BYTE & 0x00) | (remainingTime/10) | 0x20;
 }
 
-/* キッチンタイマー1の位表示表示 */
+
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void drawRightOf7SegLed(int remainingTime){
 	//(リセット|書き込み|左消灯右点灯)
 	PA.DR.BYTE = (PA.DR.BYTE & 0x00) | (remainingTime - ((remainingTime/10)*10)) | 0x10;
@@ -259,14 +278,26 @@ void drawRightOf7SegLed(int remainingTime){
 
 
 
-/* LED初期化 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void initLed(void){
 	PB.DDR = 0xff;
 	PB.DR.BYTE = 0x00;
 }
 
 
-/* 水位ゲージ表示 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void drawWaterLevel(int waterLevel){
 	if(waterLevel>WATER_LV_MAX)
 		waterLevel = WATER_LV_MAX;
@@ -276,8 +307,13 @@ void drawWaterLevel(int waterLevel){
 }
 
 
-
-/* LED点灯 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void onLamp(LampId_t lampId){
 	switch(lampId){
 		case BOIL_LAMP:
@@ -295,7 +331,13 @@ void onLamp(LampId_t lampId){
 }
 
 
-/* LED消灯 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void offLamp(LampId_t lampId){
 	switch(lampId){
 		case BOIL_LAMP:
@@ -313,7 +355,13 @@ void offLamp(LampId_t lampId){
 }
 
 
-/* LED反転 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void revLamp(LampId_t LampId){
 switch(LampId){
 		case BOIL_LAMP:

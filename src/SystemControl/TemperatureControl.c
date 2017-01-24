@@ -1,11 +1,23 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: TemperatureControl.c
+ * @brief	: 保温や沸騰機能に関する処理
+ * ------------------------------------------------------ * 
+ */
 #include "TemperatureControl.h"
 #include "../DeviceControl/HeaterControl.h"
 #include "../InfoManager/KettleInfo.h"
 #include "../UIManager/Buzzer.h"
 
 
-/* 沸騰実行関数 */
-int doBoiling(void){
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 沸騰を行う
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
+void doBoiling(void){
 	static int tempMaxFlag=0, count=0, buzzerCount=0;
 	setHeaterPower(255);
 	// 水温が100度に達したらフラグON
@@ -24,14 +36,19 @@ int doBoiling(void){
 			count = 0;
 			buzzerCount=0;
 			setHeatState(KEEP_WARM);
-			return 1;
 		}
 	}
-	return 0;
 }
 
 
-/* 保温実行関数 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 保温を行う
+ * @param	: mode(PREPARATION::自然冷却、START::保温開始)
+ * @sa		: PREPARATION, STARTはconstant.hに宣言
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 void doKeepWarm(int mode){
 	switch(mode){
 		case PREPARATION:
@@ -50,7 +67,13 @@ void doKeepWarm(int mode){
 }
 
 
-/* 保温モード切り替え関数 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 保温モードの切り替えを行う
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 void switchKeepWarmMode(void){
 	switch((int)getTargetTemperature()){
 		case (int)HIGH_TEMPERATURE_MODE:
@@ -66,7 +89,13 @@ void switchKeepWarmMode(void){
 }
 
 
-/* 保温用PID制御値算出関数 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: ヒーターのPID制御量を算出する
+ * @param	: target::目標水温、now::現在水温
+ * @return	: ヒータ制御量(int)
+ * ------------------------------------------------------ * 
+ */
 int culHeaterPid(float target, float now){
 	static float nowD=0.0, pastD=0.0, integral=0.0;
 	
