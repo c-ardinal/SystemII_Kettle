@@ -151,16 +151,15 @@ void int_imia1(void){
 		else if(getHeatState()==KEEP_WARM){
 			if(keepWarmEnableFlag==0){
 				doKeepWarm(PREPARATION);
-				if(getWaterTemperature()<=getTargetTemperature()){
-					playBuzzer(30);
+				if(getWaterTemperature()<=getTargetTemperature())
 					keepWarmEnableFlag=1;
-				}
 			}
 			else
 				doKeepWarm(START);
 		}
 		//キッチンタイマカウントダウン処理
 		kitchenTimerCountDown();
+		
 		countMsec = 0;
 		countSec++;
 		if(cannotHeatingErrorFlag==TRUE 
@@ -181,7 +180,7 @@ void int_imia1(void){
 		
 	// 60秒ごとに処理(加熱不能エラー)
 	if(countSec>=60){
-		if(hasCannotHeatingError()==TRUE)
+		if(hasCannotHeatingError()==TRUE && getLidState()==CLOSE)
 			cannotHeatingErrorFlag = TRUE;
 		countSec = 0;
 	}
@@ -193,12 +192,15 @@ void int_imia1(void){
 		onBuzzer();
 	}
 	
-	// エラー発生時のブザー処理
+	// エラー発生時のブザーが鳴って30秒経った後の処理
 	if(errorBuzzerCount>=30){
 		offBuzzer();
 		errorBuzzerCount=0;
 		cannotHeatingErrorFlag=0;
 		highTemperatureErrorFlag=0;
+		controlSource(ON);
+		if(isHeatable()==TRUE)
+			setHeatState(BOIL);
 	}
 	
 	ITU1.TSR.BIT.IMFA = 0;			//フラグリセット
