@@ -9,11 +9,26 @@
 #include "../UIManager/UIControl.h"
 #include "../InfoManager/KettleInfo.h"
 
+
+ /* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void initBuzzer(void){
 	P6.DDR = 0x70;
 }
 
 
+ /* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void playBuzzer(int playSeconds){
 	int i, remainingTime = 0;
 	P6.DR.BIT.B4 = 1;
@@ -35,11 +50,25 @@ void playBuzzer(int playSeconds){
 }
 
 
+ /* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void onBuzzer(){
 	P6.DR.BYTE = (P6.DR.BYTE & 0xcf) | 0x3f;
 }
 
 
+ /* 
+ * ------------------------------------------------------ * 
+ * @function: 
+ * @param	: 
+ * @return	: 
+ * ------------------------------------------------------ * 
+ */
 void offBuzzer(){
 	P6.DR.BYTE &= 0xcf;
 }

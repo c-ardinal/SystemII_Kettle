@@ -1,3 +1,9 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: KettleControl.h
+ * @brief	: KettleControl.c用のヘッダファイル
+ * ------------------------------------------------------ * 
+ */
 #ifndef _KETTLE_CONTROL_H_
 #define _KETTLE_CONTROL_H_
 

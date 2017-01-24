@@ -1,7 +1,19 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: KettleControl.c
+ * @brief	: システムの処理の中枢を担う
+ * ------------------------------------------------------ * 
+ */
 #include "KettleControl.h"
 
 
-/* システムの初期化 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: システムの初期化を行う
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 void initSystem(void){
 	//各処理の初期化関数呼び出し
 	initTimer();
@@ -27,7 +39,13 @@ void initSystem(void){
 }
 
 
-/* システム実行 */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 時間制約のないシステム処理を行う
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 void executeSystem(void){
 	drawWaterLevel(getWaterLevel());
 	drawTemperature((int)getWaterTemperature());
@@ -35,7 +53,13 @@ void executeSystem(void){
 }
 
 
-/* 1msごとに発生するタイマ割り込み */
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 時間制約のあるシステム処理を行う(1周1[ms])
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
 #pragma interrupt
 void int_imia1(void){
 	static int countMsec=0, countSec=0;		

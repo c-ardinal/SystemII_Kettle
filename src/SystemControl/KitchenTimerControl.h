@@ -1,3 +1,9 @@
+/* 
+ * ------------------------------------------------------ * 
+ * @file	: KitchenTimer.h
+ * @brief	: KitchenTimer.c用のヘッダファイル
+ * ------------------------------------------------------ * 
+ */
 #ifndef _KITCHEN_TIMER_CONTROL_H_
 #define _KITCHEN_TIMER_CONTROL_H_
 
