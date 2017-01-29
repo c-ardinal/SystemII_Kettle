@@ -10,6 +10,9 @@
 
 #include "../3048f.h"
 #include "../constant.h"
+#include "../General/Timer.h"
+#include "../UIManager/UIControl.h"
+#include "../InfoManager/KettleInfo.h"
 
 
 void initBuzzer(void);

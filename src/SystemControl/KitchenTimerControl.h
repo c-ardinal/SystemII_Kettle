@@ -10,11 +10,12 @@
 
 #include "../3048f.h"
 #include "../constant.h"
+#include "../UIManager/Buzzer.h"
 
 
-void kitchenTimerCountUp(void);
-void kitchenTimerCountDown(void);
-int convertSecondToMinute(void);
+int kitchenTimerCountUp(int);
+int kitchenTimerCountDown(int);
+int convertSecondToMinute(int);
 
 
 #endif

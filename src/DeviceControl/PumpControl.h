@@ -10,7 +10,6 @@
 
 #include "../3048f.h"
 #include "../constant.h"
-#include "../InfoManager/KettleInfo.h"
 
 
 void initPump(void);

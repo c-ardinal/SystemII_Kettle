@@ -5,9 +5,6 @@
  * ------------------------------------------------------ * 
  */
 #include "TemperatureControl.h"
-#include "../DeviceControl/HeaterControl.h"
-#include "../InfoManager/KettleInfo.h"
-#include "../UIManager/Buzzer.h"
 
 
 /* 
@@ -17,16 +14,28 @@
  * @return	: void
  * ------------------------------------------------------ * 
  */
-void doBoiling(void){
+ void initTempControl(void){
+ 	initHeater();
+ }
+
+
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 沸騰を行う
+ * @param	: 現在水温
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
+void doBoiling(float NowTemperature){
 	static int tempMaxFlag=0, count=0, buzzerCount=0;
 	setHeaterPower(255);
 	// 水温が100度に達したらフラグON
-	if(getWaterTemperature()>=100)
+	if(NowTemperature>=100.0)
 		tempMaxFlag = 1;
 	// 100度に達した後3分計測
 	if(tempMaxFlag==1)
 		count++;
-	// 3分経ったら終了
+	// 3分(=180秒)経ったら終了
 	if(count>=5){
 		if(buzzerCount++<3){
 			playBuzzer(100);
@@ -35,7 +44,7 @@ void doBoiling(void){
 			tempMaxFlag = 0;
 			count = 0;
 			buzzerCount=0;
-			setHeatState(KEEP_WARM);
+			setHeatState(BOIL_END);
 		}
 	}
 }
@@ -43,57 +52,56 @@ void doBoiling(void){
 
 /* 
  * ------------------------------------------------------ * 
- * @function: 保温を行う
- * @param	: mode(PREPARATION::自然冷却、START::保温開始)
- * @sa		: PREPARATION, STARTはconstant.hに宣言
+ * @function: 自然冷却を行う
+ * @param	: void
  * @return	: void
  * ------------------------------------------------------ * 
  */
-void doKeepWarm(int mode){
-	switch(mode){
-		case PREPARATION:
-			setHeaterPower(0);
-		break;
-		case START:
-			setHeaterPower(
-				culHeaterPid(
-					getTargetTemperature(), getWaterTemperature()
-				)
-			);
-		break;
-		default:
-		break;
-	}
+void doCooling(void){
+	setHeaterPower(0);
+}
+
+
+/* 
+ * ------------------------------------------------------ * 
+ * @function: 保温を行う
+ * @param	: 目標水温、現在水温
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
+void doKeepWarm(float TargetTemperature, float NowTemperature){
+	setHeaterPower(culHeaterPid(getTargetTemperature(), getWaterTemperature()));
 }
 
 
 /* 
  * ------------------------------------------------------ * 
  * @function: 保温モードの切り替えを行う
- * @param	: void
- * @return	: void
+ * @param	: 現在の目標水温
+ * @return	: 次の目標水温
  * ------------------------------------------------------ * 
  */
-void switchKeepWarmMode(void){
-	switch((int)getTargetTemperature()){
+float switchKeepWarmMode(float NowTargetTemperature){
+	switch((int)NowTargetTemperature){
 		case (int)HIGH_TEMPERATURE_MODE:
-			setTargetTemperature(SAVING_MODE);
+			return SAVING_MODE;
 		break;
 		case (int)SAVING_MODE:
-			setTargetTemperature(MILK_MODE);
+			return MILK_MODE;
 		break;
 		case (int)MILK_MODE:
-			setTargetTemperature(HIGH_TEMPERATURE_MODE);
+			return HIGH_TEMPERATURE_MODE;
 		break;
 	}
+	return 0;
 }
 
 
 /* 
  * ------------------------------------------------------ * 
  * @function: ヒーターのPID制御量を算出する
- * @param	: target::目標水温、now::現在水温
- * @return	: ヒータ制御量(int)
+ * @param	: 目標水温、現在水温
+ * @return	: ヒータ制御量
  * ------------------------------------------------------ * 
  */
 int culHeaterPid(float target, float now){
@@ -121,3 +129,26 @@ int culHeaterPid(float target, float now){
 	return result;
 }
 
+
+/* 
+ * ------------------------------------------------------ * 
+ * @function: ヒーターの電源を入れる
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
+void onHeaterSource(void){
+	controlSource(ON);
+}
+
+
+/* 
+ * ------------------------------------------------------ * 
+ * @function: ヒーターの電源を切る
+ * @param	: void
+ * @return	: void
+ * ------------------------------------------------------ * 
+ */
+void offHeaterSource(void){
+	controlSource(OFF);
+}
