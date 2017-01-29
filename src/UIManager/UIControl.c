@@ -210,15 +210,23 @@ void drawTemperature(int DrawTemperature){
  * ------------------------------------------------------ * 
  */
 void drawKeepWarmMode(int ModeId){
+	char *DrawString;
+	switch(ModeId){
+		case (int)HIGH_TEMPERATURE_MODE:
+			DrawString = "  KeepMode :HIGH";
+		break;
+		case (int)SAVING_MODE:
+			DrawString = "  KeepMode :SAVE";
+		break;
+		case (int)MILK_MODE:
+			DrawString = "  KeepMode :MILK";
+		break;
+		default:
+			DrawString = "  KeepMode :NONE";
+		break;
+	}
 	//文字列表示
-	drawStringToLcd(" KeepMode  :  ", 1);
-	//10の位表示
-	if((ModeId/10)==0)
-		write4bitLcd(0x20, DATA);
-	else
-		write4bitLcd((0x30+(ModeId/10)), DATA);
-	//1の位表示
-	write4bitLcd((0x30+(ModeId-(ModeId/10)*10)), DATA);
+	drawStringToLcd(DrawString, 1);
 }
 
 
