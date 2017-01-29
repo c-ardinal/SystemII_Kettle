@@ -21,7 +21,7 @@ typedef struct{
 	int lockState;
 	int remainingTime;
 	float targetTemperature;
-}info_t;
+}Info_t;
 
 
 /* setter */

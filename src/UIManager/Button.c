@@ -42,14 +42,21 @@ int isState(ButtonId_t buttonId){
 int isPressed(ButtonId_t buttonId){
 	// ボタンの状態保持用変数 
 	static int buttonState[8][2] = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
-	buttonState[buttonId][0] = buttonState[buttonId][1];
-	buttonState[buttonId][1] = isState(buttonId);
-	if(buttonState[buttonId][0]==0 && buttonState[buttonId][1]==1)
+	buttonState[buttonId][PAST] = buttonState[buttonId][NEW];
+	buttonState[buttonId][NEW] = isState(buttonId);
+	//解放→押下
+	if(buttonState[buttonId][PAST]==OFF 
+		&& buttonState[buttonId][NEW]==ON)
 		return PRESS_START;
-	else if(buttonState[buttonId][0]==1 && buttonState[buttonId][1]==1)
+	//押下中
+	else if(buttonState[buttonId][PAST]==ON 
+		&& buttonState[buttonId][NEW]==ON)
 		return PRESS_NOW;
-	else if(buttonState[buttonId][0]==1 && buttonState[buttonId][1]==0)
+	//押下→解放
+	else if(buttonState[buttonId][PAST]==ON 
+		&& buttonState[buttonId][NEW]==OFF)
 		return PRESS_END;
+	//解放中
 	else 
 		return PRESS_NO;
 }

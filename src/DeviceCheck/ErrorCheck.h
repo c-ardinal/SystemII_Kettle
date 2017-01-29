@@ -10,12 +10,10 @@
 
 #include "../3048f.h"
 #include "../constant.h"
-#include "../InfoManager/KettleInfo.h"
-#include "../DeviceControl/HeaterControl.h"
 
 
-int hasHighTemperatureError(void);
-int hasCannotHeatingError(void);
+int hasHighTemperatureError(float);
+int hasCannotHeatingError(float, float);
 
 
 #endif

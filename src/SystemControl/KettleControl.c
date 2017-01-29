@@ -23,7 +23,7 @@ void initSystem(void){
 	initButton();
 	initBuzzer();
 	initSensor();
-	initHeater();
+	initTempControl();
 	initPump();
 	
 	//初期値の設定
@@ -36,6 +36,9 @@ void initSystem(void){
 	setTargetTemperature(HIGH_TEMPERATURE_MODE);
 	setPumpState(SUPPLY_NO);	
 	offBuzzer();
+	
+	//内部値の初期化
+	hasCannotHeatingError(getWaterTemperature(), 0);
 }
 
 
@@ -65,16 +68,15 @@ void int_imia1(void){
 	static int countMsec=0, countSec=0;		
 	static int cannotHeatingErrorFlag=0, 
 			   highTemperatureErrorFlag=0,
-			   errorBuzzerCount=0,
-			   keepWarmEnableFlag=0;
+			   errorBuzzerCount=0;
 	
 	countMsec++;
 	
 	// 1msごとに7segの点灯を切り替え
 	if(countMsec%2==0)
-		drawLeftOf7SegLed(convertSecondToMinute());
+		drawLeftOf7SegLed(convertSecondToMinute(getRemainingTime()));
 	else if(countMsec%2==1)
-		drawRightOf7SegLed(convertSecondToMinute());
+		drawRightOf7SegLed(convertSecondToMinute(getRemainingTime()));
 	
 	// 100ms経った時の処理
 	if(countMsec%100==0){
@@ -84,28 +86,40 @@ void int_imia1(void){
 	
 		//沸騰ボタン押下時処理 
 		if(isPressed(BOIL_BUTTON)==PRESS_START){
-			if(isHeatable()==TRUE && getHeatState()!=BOIL && 
-				cannotHeatingErrorFlag==FALSE && highTemperatureErrorFlag==FALSE){
-					playBuzzer(20);
-					setHeatState(BOIL);
+			if(isHeatable()==TRUE 
+				&& getHeatState()!=BOIL 
+				&& cannotHeatingErrorFlag==FALSE 
+				&& highTemperatureErrorFlag==FALSE){
+				playBuzzer(20);
+				setHeatState(BOIL);
 			}
 		}
 		
 		//キッチンタイマボタン押下時処理
 		if(isPressed(TIMER_BUTTON)==PRESS_START){
 			playBuzzer(20);
-			kitchenTimerCountUp();
+			setRemainingTime(kitchenTimerCountUp(getRemainingTime()));
 		}
 		
 		//給湯ボタン押下時処理
 		if(isPressed(SUPPLY_BUTTON)==PRESS_NOW){
-			if(getLockState()==UNLOCK)
+			if(getLockState()==UNLOCK){
+				setPumpState(SUPPLY_NOW);
 				doPump();
-			else
+			}
+			else{
+				setPumpState(SUPPLY_NO);
 				stopPump();
+			}
+			if(WATER_LV_MIN<=getWaterLevel() 
+				&& getWaterLevel()<=WATER_LV_MAX){
+				onHeaterSource();
+			}
 		}
-		else
+		else{
+			setPumpState(SUPPLY_NO);
 			stopPump();
+		}
 		
 		//ロックボタン押下時処理
 		if(isPressed(LOCK_BUTTON)==PRESS_START){
@@ -121,9 +135,9 @@ void int_imia1(void){
 		//保温ボタン押下時処理
 		if(isPressed(K_W_BUTTON)==PRESS_START){
 			playBuzzer(20);
-			switchKeepWarmMode();
-			if(isHeatable() && 
-				cannotHeatingErrorFlag==FALSE 
+			setTargetTemperature(switchKeepWarmMode(getTargetTemperature()));
+			if(isHeatable() 
+				&& cannotHeatingErrorFlag==FALSE 
 				&& highTemperatureErrorFlag==FALSE)
 				setHeatState(BOIL);
 		}
@@ -135,7 +149,7 @@ void int_imia1(void){
 			&& cannotHeatingErrorFlag==FALSE 
 			&& highTemperatureErrorFlag==FALSE){
 			setHeatState(BOIL);
-			controlSource(ON);
+			onHeaterSource();
 		}
 		pastLidState = getLidState();
 		
@@ -150,7 +164,8 @@ void int_imia1(void){
 			onLamp(BOIL_LAMP);
 			offLamp(K_W_LAMP);
 		}
-		else if(getHeatState() == KEEP_WARM){
+		else if(getHeatState() == KEEP_WARM 
+			|| getHeatState() == BOIL_END){
 			offLamp(BOIL_LAMP);
 			onLamp(K_W_LAMP);
 		}
@@ -168,24 +183,24 @@ void int_imia1(void){
 		//水位更新
 		setWaterLevel(gainWaterLevel());
 		//加熱処理
-		if(getHeatState()==BOIL){
-			keepWarmEnableFlag=0;
-			doBoiling();
+		if(getHeatState()==BOIL)
+			doBoiling(getWaterTemperature());
+		else if(getHeatState()==BOIL_END){
+			doCooling();
+			if(getWaterTemperature()<=getTargetTemperature()){
+				onHeaterSource();
+				setHeatState(KEEP_WARM);
+			}
 		}
 		else if(getHeatState()==KEEP_WARM){
-			if(keepWarmEnableFlag==0){
-				doKeepWarm(PREPARATION);
-				if(getWaterTemperature()<=getTargetTemperature())
-					keepWarmEnableFlag=1;
-			}
-			else
-				doKeepWarm(START);
+			doKeepWarm(getTargetTemperature(), getWaterTemperature());
 		}
 		//キッチンタイマカウントダウン処理
-		kitchenTimerCountDown();
-		
+		setRemainingTime(kitchenTimerCountDown(getRemainingTime()));
+		//カウントリセット
 		countMsec = 0;
 		countSec++;
+		//エラー時のブザーカウントアップ
 		if(cannotHeatingErrorFlag==TRUE 
 			|| highTemperatureErrorFlag==TRUE)
 			errorBuzzerCount++;
@@ -195,24 +210,29 @@ void int_imia1(void){
 	if(getWaterLevel()<WATER_LV_MIN 
 		|| WATER_LV_MAX<getWaterLevel()){
 		setHeatState(NONE);
-		controlSource(OFF);
+		offHeaterSource();
 	}
 	
 	// 常に行う処理(高温エラーチェック)
-	if(hasHighTemperatureError()==TRUE)
+	if(hasHighTemperatureError(getWaterTemperature())==TRUE)
 		highTemperatureErrorFlag = TRUE;
 		
 	// 60秒ごとに処理(加熱不能エラー)
-	if(countSec>=60){
-		if(hasCannotHeatingError()==TRUE && getLidState()==CLOSE)
-			cannotHeatingErrorFlag = TRUE;
+	if(countSec>=60
+		&& getLidState()==CLOSE){
+		if(getHeatState()==NONE
+			|| getHeatState()==BOIL_END){
+			cannotHeatingErrorFlag 
+			= hasCannotHeatingError(getWaterTemperature(), getTargetTemperature());
+		}
 		countSec = 0;
 	}
 	
 	// エラー発生時の処理
-	if(cannotHeatingErrorFlag==1 || highTemperatureErrorFlag==1){
+	if(cannotHeatingErrorFlag==TRUE 
+		|| highTemperatureErrorFlag==TRUE){
 		setHeatState(NONE);
-		controlSource(OFF);
+		offHeaterSource();
 		onBuzzer();
 	}
 	
@@ -220,9 +240,9 @@ void int_imia1(void){
 	if(errorBuzzerCount>=30){
 		offBuzzer();
 		errorBuzzerCount=0;
-		cannotHeatingErrorFlag=0;
-		highTemperatureErrorFlag=0;
-		controlSource(ON);
+		cannotHeatingErrorFlag=FALSE;
+		highTemperatureErrorFlag=FALSE;
+		onHeaterSource();
 		if(isHeatable()==TRUE)
 			setHeatState(BOIL);
 	}

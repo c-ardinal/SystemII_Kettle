@@ -29,7 +29,6 @@ void initPump(void){
  */
 void doPump(void){
 	DA.DR1 = 255;
-	setPumpState(SUPPLY_NOW);
 }
 
 
@@ -42,5 +41,4 @@ void doPump(void){
  */
 void stopPump(void){
 	DA.DR1 = 0;
-	setPumpState(SUPPLY_NO);
 }

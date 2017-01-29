@@ -10,7 +10,6 @@
 
 #include "../3048f.h"
 #include "../constant.h"
-#include "../UIManager/UIControl.h"
 #include "../InfoManager/KettleInfo.h"
 #include "../DeviceControl/HeaterControl.h"
 

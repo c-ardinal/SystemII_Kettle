@@ -10,6 +10,7 @@
 
 #include "../3048f.h"
 #include "../constant.h"
+#include "../General/Timer.h"
 
 
 //LED識別ID

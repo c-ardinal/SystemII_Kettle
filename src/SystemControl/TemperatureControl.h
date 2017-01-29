@@ -10,12 +10,18 @@
 
 #include "../3048f.h"
 #include "../constant.h"
+#include "../DeviceControl/HeaterControl.h"
+#include "../UIManager/Buzzer.h"
 
 
-void doBoiling(void);
-void doKeepWarm(int);
-void switchKeepWarmMode(void);
+void initTempControl(void);
+void doBoiling(float);
+void doCooling(void);
+void doKeepWarm(float, float);
+float switchKeepWarmMode(float);
 int culHeaterPid(float, float);
+void onHeaterSource(void);
+void offHeaterSource(void);
 
 
 #endif

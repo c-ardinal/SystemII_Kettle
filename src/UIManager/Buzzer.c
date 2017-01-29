@@ -5,16 +5,13 @@
  * ------------------------------------------------------ * 
  */
 #include "Buzzer.h"
-#include "../General/Timer.h"
-#include "../UIManager/UIControl.h"
-#include "../InfoManager/KettleInfo.h"
 
 
  /* 
  * ------------------------------------------------------ * 
- * @function: 
- * @param	: 
- * @return	: 
+ * @function: ブザーの初期化を行う
+ * @param	: void
+ * @return	: void
  * ------------------------------------------------------ * 
  */
 void initBuzzer(void){
@@ -24,9 +21,9 @@ void initBuzzer(void){
 
  /* 
  * ------------------------------------------------------ * 
- * @function: 
- * @param	: 
- * @return	: 
+ * @function: ブザーを指定時間鳴動させる
+ * @param	: 鳴動時間(msec)
+ * @return	: void
  * ------------------------------------------------------ * 
  */
 void playBuzzer(int playSeconds){
@@ -34,7 +31,8 @@ void playBuzzer(int playSeconds){
 	P6.DR.BIT.B4 = 1;
 	P6.DR.BIT.B5 = 1;
 	for(i=0; i<playSeconds; i++){
-		if(getRemainingTime()%60>0 && getRemainingTime()/60<60)
+		if(getRemainingTime()%60>0 
+			&& getRemainingTime()/60<60)
 			remainingTime = getRemainingTime()/60+1;
 		else
 			remainingTime = getRemainingTime()/60;
@@ -52,23 +50,23 @@ void playBuzzer(int playSeconds){
 
  /* 
  * ------------------------------------------------------ * 
- * @function: 
- * @param	: 
- * @return	: 
+ * @function: ブザーを常にならす
+ * @param	: void
+ * @return	: void
  * ------------------------------------------------------ * 
  */
-void onBuzzer(){
+void onBuzzer(void){
 	P6.DR.BYTE = (P6.DR.BYTE & 0xcf) | 0x3f;
 }
 
 
  /* 
  * ------------------------------------------------------ * 
- * @function: 
- * @param	: 
- * @return	: 
+ * @function: ブザーを停止する
+ * @param	: void
+ * @return	: void
  * ------------------------------------------------------ * 
  */
-void offBuzzer(){
+void offBuzzer(void){
 	P6.DR.BYTE &= 0xcf;
 }
