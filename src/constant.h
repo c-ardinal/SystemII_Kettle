@@ -17,7 +17,7 @@
  
 //PID制御l用パラメータ
 #define  KC						55.000F
-#define  PU						54.000F
+#define  PU						55.000F
 
 
 //保温モード識別ID
